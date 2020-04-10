@@ -1,0 +1,92 @@
+.signin-container {
+  min-height: 100vh;
+  padding-bottom: 24px;
+  background: var(--gray);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.signin-container h1 {
+  color: var(--dark-gray);
+}
+
+.signin-container header {
+  width: 100%;
+  height: 50px;
+  padding: 4px 64px;
+}
+
+.signin-container a {
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--blue);
+  margin-bottom: 16px;
+}
+
+.signin-container a:hover {
+  text-decoration: underline;
+}
+
+.signin-form-container {
+  width: 100%;
+  max-width: 450px;
+  max-height: 500px;
+  background: var(--blue);
+  border-radius: 8px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  padding: 32px;
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.signin-form-container .error-message {
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  background: var(--red);
+  color: var(--white);
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.signin-form-container form {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.signin-form-container form .error {
+  border-color: var(--red);
+}
+
+.signin-form-container form .error::placeholder {
+  color: var(--red);
+}
+
+.signin-form-container form .input-group {
+  width: 100%;
+}
+
+.signin-form-container form .input-group input {
+  margin-bottom: 16px;
+}
+
+.signin-form-container form button {
+  width: 100%;
+  height: 60px;
+}
+
+.signin-form-container form a {
+  margin-bottom: 0;
+  color: var(--yellow);
+}
