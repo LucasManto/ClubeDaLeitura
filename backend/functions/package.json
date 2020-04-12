@@ -4,7 +4,7 @@
     "lint": "tslint --project tsconfig.json",
     "build": "tsc",
     "serve": "npm run build && firebase serve --only functions",
-    "serve-test": "npm run build && NODE_ENV=test firebase serve --only functions",
+    "serve-test": "npm run build && NODE_ENV=test firebase -P clube-da-leitura-test serve --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
