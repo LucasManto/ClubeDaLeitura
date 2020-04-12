@@ -1,0 +1,85 @@
+.create-club-container {
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.create-club-container header h1 {
+  font-size: 3.2rem;
+  font-weight: bold;
+  color: var(--blue);
+}
+
+.create-club-container .create-club-image {
+  width: 100%;
+  max-width: 600px;
+  margin: 1.6rem 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.create-club-container .create-club-image img {
+  width: 200px;
+  border-radius: 50%;
+}
+
+.create-club-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.create-club-container form input {
+  margin-top: 0.8rem;
+  min-width: 800px;
+  max-width: 1200px;
+}
+
+.create-club-container form .form-title {
+  font-size: 2.4rem;
+  font-weight: bold;
+  color: var(--yellow);
+  margin-top: 1.6rem;
+}
+
+.create-club-container form .participants-container {
+  width: 100%;
+  color: var(--blue);
+
+  display: flex;
+  justify-content: space-around;
+}
+
+.create-club-container form .available-participants,
+.create-club-container form .current-participants {
+  width: 100%;
+  min-height: 5rem;
+  margin-top: 0.8rem;
+  border-radius: 0.8rem;
+  padding: 0.5rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.create-club-container form h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+}
+
+.create-club-container form .participants-container span {
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.create-club-container form .participants-container span:hover {
+  opacity: 0.8;
+}
+
+.create-club-container form button {
+  margin-bottom: 0.8rem;
+}

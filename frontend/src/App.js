@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import './App.css'
 import {
   BrowserRouter as Router,
@@ -7,7 +7,7 @@ import {
   Redirect,
 } from 'react-router-dom'
 
-import firebase from './services/Firebase'
+import useAuth from './hooks/useAuth'
 
 import Index from './pages/Index'
 import SignIn from './pages/SignIn'
@@ -16,17 +16,13 @@ import SignUp from './pages/SignUp'
 import Home from './pages/Home'
 
 export default function App() {
-  const [user, setUser] = useState(null)
-
-  firebase.auth().onAuthStateChanged(currentUser => {
-    setUser(currentUser)
-  })
+  const { user, pending } = useAuth()
 
   return (
     <Router>
       <Switch>
         <Route path="/home">
-          <Home setUser={setUser} />
+          {!pending && !user ? <Redirect to="/" /> : <Home />}
         </Route>
         <Route path="/signin">
           {user ? <Redirect to="/home" /> : <SignIn />}
