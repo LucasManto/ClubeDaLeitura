@@ -44,6 +44,37 @@ describe('Cloud functions', function () {
     myFunctions = require('../lib/index')
   })
 
+  beforeEach(async function () {
+    const collections = await admin.firestore().listCollections()
+    for (collection of collections) {
+      collection
+        .get()
+        .then(snapshot => {
+          if (snapshot.size == 0) {
+            return 0
+          }
+
+          let batch = admin.firestore().batch()
+          snapshot.docs.forEach(doc => {
+            batch.delete(doc.ref)
+          })
+
+          return batch.commit().then(() => {
+            return snapshot.size
+          })
+        })
+        .then(numDeleted => {
+          if (numDeleted === 0) {
+            resolve()
+            return
+          }
+        })
+    }
+
+    const users = (await admin.auth().listUsers()).users
+    await Promise.all(users.map(user => admin.auth().deleteUser(user.uid)))
+  })
+
   after(function () {
     test.cleanup()
   })
@@ -58,22 +89,6 @@ describe('Cloud functions', function () {
 
     beforeEach(async function () {
       userData = returnDefaultUserData()
-    })
-
-    after(function () {
-      userData = returnDefaultUserData()
-    })
-
-    afterEach(async function () {
-      if (response.uid) {
-        await admin.auth().deleteUser(response.uid)
-
-        const userDocReference = admin.firestore().doc(`users/${response.uid}`)
-        const userDocSnapshot = await userDocReference.get()
-        if (userDocSnapshot.exists) {
-          await userDocReference.delete()
-        }
-      }
     })
 
     it('should create user', async function () {
@@ -97,6 +112,42 @@ describe('Cloud functions', function () {
       } catch (error) {
         response = error
         assert.propertyVal(error, 'code', 'invalid-argument')
+      }
+    })
+  })
+
+  describe('getUserData', function () {
+    let createUser
+    let getUserData
+    let response
+    let userId
+
+    beforeEach(async function () {
+      createUser = test.wrap(myFunctions.createUser)
+      getUserData = test.wrap(myFunctions.getUserData)
+
+      response = await createUser(userData)
+      userId = response.uid
+    })
+
+    it('should return user data', async function () {
+      response = await getUserData({}, { auth: { uid: userId } })
+      assert.containsAllKeys(response, [
+        'name',
+        'surname',
+        'school',
+        'birthDate',
+        'gender',
+      ])
+    })
+
+    it('should check user is authenticated', async function () {
+      try {
+        response = await getUserData({})
+        assert.fail()
+      } catch (error) {
+        assert.property(error, 'code')
+        assert.propertyVal(error, 'code', 'unauthenticated')
       }
     })
   })

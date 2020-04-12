@@ -63,3 +63,12 @@ export const createUser = functions.https.onCall(async (data) => {
     } else throw new functions.https.HttpsError('already-exists', error.message)
   }
 })
+
+export const getUserData = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'User should be authenticated.')
+  }
+
+  const docSnapshot = await firestore.doc(`users/${context.auth.uid}`).get()
+  return docSnapshot.data()
+})
