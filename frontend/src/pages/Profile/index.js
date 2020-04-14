@@ -77,8 +77,8 @@ export default function Profile({ userData, setUserData }) {
           {formik.values.imgUrl ? (
             <img src={formik.values.imgUrl} alt={userData.name} />
           ) : (
-            <FaUserCircle size={200} color="var(--white)" />
-          )}
+              <FaUserCircle size={200} color="var(--white)" />
+            )}
           <label className="button" htmlFor="profile-image-upload">
             Selecione uma foto
           </label>
@@ -122,6 +122,9 @@ export default function Profile({ userData, setUserData }) {
           name="name"
           type="text"
           placeholder="Nome"
+          className={
+            formik.touched.name && formik.errors.name ? 'error' : ''
+          }
           value={formik.values.name || ''}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -130,6 +133,9 @@ export default function Profile({ userData, setUserData }) {
           name="surname"
           type="text"
           placeholder="Sobrenome"
+          className={
+            formik.touched.surname && formik.errors.surname ? 'error' : ''
+          }
           value={formik.values.surname || ''}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -138,6 +144,9 @@ export default function Profile({ userData, setUserData }) {
           name="school"
           type="text"
           placeholder="Escola"
+          className={
+            formik.touched.school && formik.errors.school ? 'error' : ''
+          }
           value={formik.values.school || ''}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -146,6 +155,9 @@ export default function Profile({ userData, setUserData }) {
           name="birthDate"
           type="date"
           placeholder="Idade"
+          className={
+            formik.touched.birthDate && formik.errors.birthDate ? 'error' : ''
+          }
           value={formik.values.birthDate || ''}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -154,6 +166,9 @@ export default function Profile({ userData, setUserData }) {
           name="gender"
           type="text"
           placeholder="Genero"
+          className={
+            formik.touched.gender && formik.errors.gender ? 'error' : ''
+          }
           value={formik.values.gender || ''}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
