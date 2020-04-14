@@ -41,7 +41,7 @@ export default function Home() {
             <Profile userData={userData} setUserData={setUserData} />
           </Route>
           <Route path={`${match.path}/criar-clube`}>
-            <CreateClub />
+            <CreateClub userData={userData} />
           </Route>
           <Route path={`${match.path}/meus-clubes`}>
             <MyClubs />
