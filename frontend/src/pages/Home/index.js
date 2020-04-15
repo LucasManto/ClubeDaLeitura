@@ -10,6 +10,7 @@ import Sidebar from '../../components/Sidebar'
 import Profile from '../Profile'
 import CreateClub from '../CreateClub'
 import MyClubs from '../MyClubs'
+import Club from '../Club'
 
 import useAuth from '../../hooks/useAuth'
 
@@ -19,13 +20,34 @@ export default function Home() {
   let match = useRouteMatch()
 
   useEffect(() => {
+    async function getClubs() {
+      const clubsIBelong = await firebase.firestore()
+        .collection('clubs')
+        .where('participants', 'array-contains', user.uid)
+        .get()
+      const clubsIManage = await firebase.firestore()
+        .collection('clubs')
+        .where('admins', 'array-contains', user.uid)
+        .get()
+
+      return {
+        clubsIBelong: clubsIBelong.docs.map(doc => ({ id: doc.id, ...doc.data() })),
+        clubsIManage: clubsIManage.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      }
+    }
+
     async function loadUserData() {
       if (user) {
         const response = await firebase
           .firestore()
           .doc(`/users/${user.uid}`)
           .get()
-        setUserData(response.data())
+        const clubs = await getClubs()
+
+        setUserData({
+          ...response.data(),
+          ...clubs
+        })
       }
     }
 
@@ -43,8 +65,11 @@ export default function Home() {
           <Route path={`${match.path}/criar-clube`}>
             <CreateClub userData={userData} />
           </Route>
+          <Route path={`${match.path}/meus-clubes/:id`}>
+            <Club userData={userData} />
+          </Route>
           <Route path={`${match.path}/meus-clubes`}>
-            <MyClubs />
+            <MyClubs userData={userData} />
           </Route>
           <Route path={`${match.path}`}>
             <div className="welcome-container">

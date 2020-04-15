@@ -1,45 +1,40 @@
 .my-clubs-container {
-  padding-top: 2rem;
+  padding-top: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .my-clubs-container header h1 {
-  font-size: 3.2rem;
+  font-size: 32px;
   font-weight: bold;
   color: var(--blue);
 }
 
-.my-clubs-container .my-clubs-image {
-  width: 100%;
-  max-width: 600px;
-  margin: 1.6rem 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-}
-
-.my-clubs-container .my-clubs-image img {
-  width: 200px;
-  border-radius: 50%;
+.my-clubs-container h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--yellow);
+  margin-top: 16px;
 }
 
 .my-clubs-container .my-clubs-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;
-  margin-top: 1.6rem;
+  gap: 5px;
+  margin-top: 16px;
+}
+
+.my-clubs-container .my-clubs-list a {
+  text-decoration: none;
 }
 
 .my-clubs-container .my-clubs-list .my-club-card {
   width: 100%;
   min-width: 400px;
   background: var(--white);
-  border-radius: 0.4rem;
-  padding: 0.8rem;
-  box-shadow: 1px 1px 2px 0 rgba(0, 0, 0, 0.75);
+  border-radius: 4px;
+  padding: 8px;
   cursor: pointer;
 
   display: flex;
@@ -52,14 +47,14 @@
 
 .my-clubs-container .my-clubs-list .my-club-card .info-title {
   font-weight: bold;
-  font-size: 1.2rem;
-  margin-bottom: 0.4rem;
+  font-size: 20px;
+  margin-bottom: 8px;
   color: var(--yellow);
 }
 
 .my-clubs-container .my-clubs-list .my-club-card .info {
-  font-size: 0.8rem;
+  font-size: 14px;
   font-weight: bold;
   color: var(--blue);
-  margin-bottom: 0.8rem;
+  margin-bottom: 4px;
 }
