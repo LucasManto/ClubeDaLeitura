@@ -132,7 +132,7 @@ export default function CreateClub({ userData }) {
         <input
           name="description"
           type="text"
-          placeholder="Description"
+          placeholder="Descrição"
           className={
             formik.touched.description && formik.errors.description ? 'error' : ''
           }
