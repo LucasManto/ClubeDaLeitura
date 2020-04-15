@@ -16,10 +16,10 @@ export default function Sidebar({ userData }) {
     <aside className="sidebar-container">
       <header>
         {userData.imgUrl ? (
-          <img src={userData.imgUrl} alt="Lucas" />
+          <img src={userData.imgUrl} alt={userData.name} />
         ) : (
-          <FaUserCircle size={200} color="var(--white)" />
-        )}
+            <FaUserCircle size={200} color="var(--white)" />
+          )}
         <span>{userData.name}</span>
       </header>
 
