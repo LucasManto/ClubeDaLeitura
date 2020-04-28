@@ -9,7 +9,7 @@ import firebase from '../../services/Firebase'
 import useAuth from '../../hooks/useAuth'
 
 
-export default function CreateClub({ userData }) {
+export default function CreateClub({ userData, setUserData }) {
   const { user } = useAuth()
   const [availableParticipants, setAvailableParticipants] = useState([])
   const [availableUsers, setAvailableUsers] = useState([])
@@ -19,17 +19,6 @@ export default function CreateClub({ userData }) {
   const [typingTimeout, setTypingTimeout] = useState(0)
 
   const history = useHistory()
-
-  useEffect(() => {
-    formik.setValues({
-      ...formik.values,
-      admins: [{
-        id: user?.uid || '',
-        name: userData.name,
-        surname: userData.surname
-      }]
-    })
-  }, [user, userData])
 
   const formik = useFormik({
     initialValues: {
@@ -48,16 +37,60 @@ export default function CreateClub({ userData }) {
       admins: Yup.array().min(1, 'O clube precisa de no mínimo 1 administrador(a).').required()
     }),
     onSubmit: async ({ name, description, participants, admins }) => {
-      await firebase.firestore().collection('clubs').add({
+      const club = {
         name,
         description,
         admins: admins.map(admin => admin.id),
         participants: participants.map(participant => participant.id),
+      }
+      const clubDocReference = await firebase.firestore().collection('clubs').add(club)
+
+      let clubsIBelong = [...userData.clubsIBelong]
+      let clubsIManage = [...userData.clubsIManage]
+
+      const isParticipant = participants.filter(participant => participant.id === user.uid)
+      if (isParticipant) {
+          clubsIBelong = [
+            ...clubsIBelong,
+            { id: clubDocReference.id, ...club}
+          ]
+      }
+      const isAdmin = admins.filter(admin => admin.id === user.uid)
+      if (isAdmin) {
+        clubsIManage = [
+          ...clubsIManage,
+          { id: clubDocReference.id, ...club}
+        ]
+      }
+
+      setUserData({
+        ...userData, 
+        clubsIBelong,
+        clubsIManage,
       })
+
+      const batch = firebase.firestore().batch()
+      participants.forEach(participant => {
+        const participantDocReference = clubDocReference.collection('participants').doc(participant.id)
+
+        batch.set(participantDocReference, participant)
+      })
+      await batch.commit()
 
       history.push('/home/meus-clubes')
     }
   })
+
+  useEffect(() => {
+    formik.setValues({
+      ...formik.values,
+      admins: [{
+        id: user?.uid || '',
+        name: userData.name,
+        surname: userData.surname
+      }]
+    })
+  }, [user, userData])
 
   function handleAddParticipant(participant) {
     formik.setValues({
@@ -157,8 +190,7 @@ export default function CreateClub({ userData }) {
               .get()
             const users = nameQuerySnapshot.docs.map(doc => ({
               id: doc.id,
-              name: doc.get('name'),
-              surname: doc.get('surname')
+              ...doc.data()
             })).filter(participant =>
               !formik.values.participants.find(p => participant.id === p.id)
             )
