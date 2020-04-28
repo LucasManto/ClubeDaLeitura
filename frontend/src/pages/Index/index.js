@@ -2,12 +2,13 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Link as ScrollLink } from 'react-scroll'
 
-import './styles.css'
 import bannerImg from '../../assets/banner.jpg'
+
+import { Container } from './styles'
 
 export default function Index() {
   return (
-    <div className="index-container">
+    <Container>
       <header>
         <img
           width={50}
@@ -36,7 +37,7 @@ export default function Index() {
           </ul>
         </nav>
 
-        <div className="button-group">
+        <div>
           <Link to="/signin" className="button outline">
             Entrar
           </Link>
@@ -229,6 +230,6 @@ export default function Index() {
           </p>
         </section>
       </main>
-    </div>
+    </Container>
   )
 }
