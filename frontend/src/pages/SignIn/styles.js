@@ -64,31 +64,31 @@ export const FormContainer = styled.div`
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-  }
 
-  form .error {
-    border-color: var(--red);
-  }
+    .error {
+      border-color: var(--red);
 
-  form .error::placeholder {
-    color: var(--red);
-  }
+      &::placeholder {
+        color: var(--red);
+      }
+    }
 
-  form .input-group {
-    width: 100%;
-  }
+    .input-group {
+      width: 100%;
 
-  form .input-group input {
-    margin-bottom: 16px;
-  }
+      input {
+        margin-bottom: 16px;
+      }
+    }
 
-  form button {
-    width: 100%;
-    height: 60px;
-  }
+    button {
+      width: 100%;
+      height: 60px;
+    }
 
-  form a {
-    margin-bottom: 0;
-    color: var(--yellow);
+    a {
+      margin-bottom: 0;
+      color: var(--yellow);
+    }
   }
 `
