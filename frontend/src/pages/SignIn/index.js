@@ -4,9 +4,9 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import ReactLoader from 'react-loading'
 
-import './styles.css'
-
 import firebase from '../../services/Firebase'
+
+import { Container, FormContainer } from './styles'
 
 export default function SignIn() {
   const formik = useFormik({
@@ -36,7 +36,7 @@ export default function SignIn() {
   })
 
   return (
-    <div className="signin-container">
+    <Container>
       <header>
         <Link to="/">
           <img src="https://picsum.photos/id/1062/50" alt="Clube da Leitura" />
@@ -44,7 +44,7 @@ export default function SignIn() {
       </header>
       <h1>Bem vindo(a) de volta</h1>
 
-      <div className="signin-form-container">
+      <FormContainer>
         {formik.touched.email && formik.errors.email ? (
           <div className="error-message">{formik.errors.email}</div>
         ) : null}
@@ -87,9 +87,9 @@ export default function SignIn() {
 
           <Link to="/">Esqueci minha senha</Link>
         </form>
-      </div>
+      </FormContainer>
 
       <Link to="/signup">Ainda não tenho conta</Link>
-    </div>
+    </Container>
   )
 }
