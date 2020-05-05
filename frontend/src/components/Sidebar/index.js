@@ -1,25 +1,26 @@
-import React from 'react'
-import './styles.css'
-import { FaUserCircle, FaUser, FaPlus, FaBook } from 'react-icons/fa'
-import { Link, useRouteMatch } from 'react-router-dom'
+import React from "react";
+import { FaUserCircle, FaUser, FaPlus, FaBook } from "react-icons/fa";
+import { Link, useRouteMatch } from "react-router-dom";
 
-import firebase from '../../services/Firebase'
+import firebase from "../../services/Firebase";
+
+import { Container } from "./styles";
 
 export default function Sidebar({ userData }) {
-  let match = useRouteMatch()
+  let match = useRouteMatch();
 
   function handleLogout() {
-    firebase.auth().signOut()
+    firebase.auth().signOut();
   }
 
   return (
-    <aside className="sidebar-container">
+    <Container>
       <header>
         {userData.imgUrl ? (
           <img src={userData.imgUrl} alt={userData.name} />
         ) : (
-            <FaUserCircle size={200} color="var(--white)" />
-          )}
+          <FaUserCircle size={200} color="var(--white)" />
+        )}
         <span>{userData.name}</span>
       </header>
 
@@ -47,6 +48,6 @@ export default function Sidebar({ userData }) {
       <button onClick={handleLogout} className="button">
         Sair
       </button>
-    </aside>
-  )
+    </Container>
+  );
 }
