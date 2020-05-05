@@ -1,12 +1,13 @@
 import React from 'react'
-import './styles.css'
 import { Link, useRouteMatch } from 'react-router-dom'
+
+import { Container } from './styles'
 
 export default function MyClubs({ userData }) {
   const match = useRouteMatch()
 
   return (
-    <div className="my-clubs-container">
+    <Container>
       <header>
         <h1>Meus clubes</h1>
       </header>
@@ -38,6 +39,6 @@ export default function MyClubs({ userData }) {
           </Link>
         ))}
       </div>
-    </div>
+    </Container>
   )
 }
