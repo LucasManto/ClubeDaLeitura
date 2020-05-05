@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import './styles.css'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import ReactLoader from 'react-loading'
@@ -8,6 +7,7 @@ import { useHistory } from 'react-router-dom'
 import firebase from '../../services/Firebase'
 import useAuth from '../../hooks/useAuth'
 
+import { Container } from './styles'
 
 export default function CreateClub({ userData, setUserData }) {
   const { user } = useAuth()
@@ -25,16 +25,20 @@ export default function CreateClub({ userData, setUserData }) {
       name: '',
       description: '',
       participants: [],
-      admins: []
+      admins: [],
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Gostaríamos de saber o nome do seu clube'),
-      description: Yup.string().required('Nos diga um pouco mais sobre o seu clube'),
+      description: Yup.string().required(
+        'Nos diga um pouco mais sobre o seu clube'
+      ),
       participants: Yup.array()
         .min(2, 'O clube precisa de pelo menos dois participantes')
         .max(30, 'Um clube pode ter no máximo 30 participantes')
         .required(),
-      admins: Yup.array().min(1, 'O clube precisa de no mínimo 1 administrador(a).').required()
+      admins: Yup.array()
+        .min(1, 'O clube precisa de no mínimo 1 administrador(a).')
+        .required(),
     }),
     onSubmit: async ({ name, description, participants, admins }) => {
       const club = {
@@ -43,52 +47,55 @@ export default function CreateClub({ userData, setUserData }) {
         admins: admins.map(admin => admin.id),
         participants: participants.map(participant => participant.id),
       }
-      const clubDocReference = await firebase.firestore().collection('clubs').add(club)
+      const clubDocReference = await firebase
+        .firestore()
+        .collection('clubs')
+        .add(club)
 
       let clubsIBelong = [...userData.clubsIBelong]
       let clubsIManage = [...userData.clubsIManage]
 
-      const isParticipant = participants.filter(participant => participant.id === user.uid)
+      const isParticipant = participants.filter(
+        participant => participant.id === user.uid
+      )
       if (isParticipant) {
-          clubsIBelong = [
-            ...clubsIBelong,
-            { id: clubDocReference.id, ...club}
-          ]
+        clubsIBelong = [...clubsIBelong, { id: clubDocReference.id, ...club }]
       }
       const isAdmin = admins.filter(admin => admin.id === user.uid)
       if (isAdmin) {
-        clubsIManage = [
-          ...clubsIManage,
-          { id: clubDocReference.id, ...club}
-        ]
+        clubsIManage = [...clubsIManage, { id: clubDocReference.id, ...club }]
       }
 
       setUserData({
-        ...userData, 
+        ...userData,
         clubsIBelong,
         clubsIManage,
       })
 
       const batch = firebase.firestore().batch()
       participants.forEach(participant => {
-        const participantDocReference = clubDocReference.collection('participants').doc(participant.id)
+        const participantDocReference = clubDocReference
+          .collection('participants')
+          .doc(participant.id)
 
         batch.set(participantDocReference, participant)
       })
       await batch.commit()
 
       history.push('/home/meus-clubes')
-    }
+    },
   })
 
   useEffect(() => {
     formik.setValues({
       ...formik.values,
-      admins: [{
-        id: user?.uid || '',
-        name: userData.name,
-        surname: userData.surname
-      }]
+      admins: [
+        {
+          id: user?.uid || '',
+          name: userData.name,
+          surname: userData.surname,
+        },
+      ],
     })
   }, [user, userData])
 
@@ -133,7 +140,7 @@ export default function CreateClub({ userData, setUserData }) {
   }
 
   return (
-    <div className="create-club-container">
+    <Container>
       <header>
         <h1>Criar clube</h1>
       </header>
@@ -155,9 +162,7 @@ export default function CreateClub({ userData, setUserData }) {
           name="name"
           type="text"
           placeholder="Nome"
-          className={
-            formik.touched.name && formik.errors.name ? 'error' : ''
-          }
+          className={formik.touched.name && formik.errors.name ? 'error' : ''}
           value={formik.values.name || ''}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -167,7 +172,9 @@ export default function CreateClub({ userData, setUserData }) {
           type="text"
           placeholder="Descrição"
           className={
-            formik.touched.description && formik.errors.description ? 'error' : ''
+            formik.touched.description && formik.errors.description
+              ? 'error'
+              : ''
           }
           value={formik.values.description || ''}
           onChange={formik.handleChange}
@@ -175,45 +182,61 @@ export default function CreateClub({ userData, setUserData }) {
         />
 
         <p className="form-title">Participantes</p>
-        <input type="text" placeholder="Digite um nome para buscarmos" onChange={e => {
-          const nameQuery = e.target.value
+        <input
+          type="text"
+          placeholder="Digite um nome para buscarmos"
+          onChange={e => {
+            const nameQuery = e.target.value
 
-          if (typingTimeout) {
-            clearTimeout(typingTimeout)
-          }
+            if (typingTimeout) {
+              clearTimeout(typingTimeout)
+            }
 
-          setTypingTimeout(setTimeout(async () => {
-            setIsSearchingParticipant(true)
-            const nameQuerySnapshot = await firebase.firestore().collection('users')
-              .where('name', '>=', nameQuery)
-              .where('name', '<=', nameQuery + '\uf8ff')
-              .get()
-            const users = nameQuerySnapshot.docs.map(doc => ({
-              id: doc.id,
-              ...doc.data()
-            })).filter(participant =>
-              !formik.values.participants.find(p => participant.id === p.id)
+            setTypingTimeout(
+              setTimeout(async () => {
+                setIsSearchingParticipant(true)
+                const nameQuerySnapshot = await firebase
+                  .firestore()
+                  .collection('users')
+                  .where('name', '>=', nameQuery)
+                  .where('name', '<=', nameQuery + '\uf8ff')
+                  .get()
+                const users = nameQuerySnapshot.docs
+                  .map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                  }))
+                  .filter(
+                    participant =>
+                      !formik.values.participants.find(
+                        p => participant.id === p.id
+                      )
+                  )
+
+                setAvailableParticipants(users)
+                setIsSearchingParticipant(false)
+              }, 500)
             )
-
-            setAvailableParticipants(users)
-            setIsSearchingParticipant(false)
-          }, 500))
-        }} />
+          }}
+        />
 
         <div className="participants-container">
           <div className="available-participants">
             <h2>Participantes disponíveis</h2>
-            {isSearchingParticipant
-              ? <ReactLoader type="bubbles" height={32} color="#f3d250" />
-              : availableParticipants.map(participant => (
+            {isSearchingParticipant ? (
+              <ReactLoader type="bubbles" height={32} color="#f3d250" />
+            ) : (
+              availableParticipants.map(participant => (
                 <span
                   key={participant.id}
                   onClick={() => handleAddParticipant(participant)}
                   className="participant-name"
                 >
-                  {participant.name + (participant.surname ? ` ${participant.surname}` : '')}
+                  {participant.name +
+                    (participant.surname ? ` ${participant.surname}` : '')}
                 </span>
-              ))}
+              ))
+            )}
           </div>
           <div className="current-participants">
             <h2>Participantes do clube</h2>
@@ -223,52 +246,67 @@ export default function CreateClub({ userData, setUserData }) {
                 onClick={() => handleRemoveParticipant(participant)}
                 className="participant-name"
               >
-                {participant.name + (participant.surname ? ` ${participant.surname}` : '')}
+                {participant.name +
+                  (participant.surname ? ` ${participant.surname}` : '')}
               </span>
             ))}
           </div>
         </div>
 
         <p className="form-title">Administradores</p>
-        <input type="text" placeholder="Digite um nome para buscarmos" onChange={e => {
-          const nameQuery = e.target.value
+        <input
+          type="text"
+          placeholder="Digite um nome para buscarmos"
+          onChange={e => {
+            const nameQuery = e.target.value
 
-          if (typingTimeout) {
-            clearTimeout(typingTimeout)
-          }
+            if (typingTimeout) {
+              clearTimeout(typingTimeout)
+            }
 
-          setTypingTimeout(setTimeout(async () => {
-            setIsSearchingAdmin(true)
-            const nameQuerySnapshot = await firebase.firestore().collection('users')
-              .where('name', '>=', nameQuery)
-              .where('name', '<=', nameQuery + '\uf8ff')
-              .get()
-            const users = nameQuerySnapshot.docs.map(doc => ({
-              id: doc.id,
-              name: doc.get('name'),
-              surname: doc.get('surname')
-            })).filter(participant =>
-              !formik.values.admins.find(p => participant.id === p.id)
+            setTypingTimeout(
+              setTimeout(async () => {
+                setIsSearchingAdmin(true)
+                const nameQuerySnapshot = await firebase
+                  .firestore()
+                  .collection('users')
+                  .where('name', '>=', nameQuery)
+                  .where('name', '<=', nameQuery + '\uf8ff')
+                  .get()
+                const users = nameQuerySnapshot.docs
+                  .map(doc => ({
+                    id: doc.id,
+                    name: doc.get('name'),
+                    surname: doc.get('surname'),
+                  }))
+                  .filter(
+                    participant =>
+                      !formik.values.admins.find(p => participant.id === p.id)
+                  )
+
+                setAvailableUsers(users)
+                setIsSearchingAdmin(false)
+              }, 500)
             )
-
-            setAvailableUsers(users)
-            setIsSearchingAdmin(false)
-          }, 500))
-        }} />
+          }}
+        />
         <div className="participants-container">
           <div className="available-participants">
             <h2>Usuários disponíveis</h2>
-            {isSearchingAdmin
-              ? <ReactLoader type="bubbles" height={32} color="#f3d250" />
-              : availableUsers.map(participant => (
+            {isSearchingAdmin ? (
+              <ReactLoader type="bubbles" height={32} color="#f3d250" />
+            ) : (
+              availableUsers.map(participant => (
                 <span
                   key={participant.id}
                   onClick={() => handleAddAdmin(participant)}
                   className="participant-name"
                 >
-                  {participant.name + (participant.surname ? ` ${participant.surname}` : '')}
+                  {participant.name +
+                    (participant.surname ? ` ${participant.surname}` : '')}
                 </span>
-              ))}
+              ))
+            )}
           </div>
           <div className="current-participants">
             <h2>Administradores do clube</h2>
@@ -278,7 +316,8 @@ export default function CreateClub({ userData, setUserData }) {
                 onClick={() => handleRemoveAdmin(participant)}
                 className="participant-name"
               >
-                {participant.name + (participant.surname ? ` ${participant.surname}` : '')}
+                {participant.name +
+                  (participant.surname ? ` ${participant.surname}` : '')}
               </span>
             ))}
           </div>
@@ -292,6 +331,6 @@ export default function CreateClub({ userData, setUserData }) {
       {formik.isSubmitting ? (
         <ReactLoader type="bubbles" height={32} color="#f3d250" />
       ) : null}
-    </div>
+    </Container>
   )
 }
