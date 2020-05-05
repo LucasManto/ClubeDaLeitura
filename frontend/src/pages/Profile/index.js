@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import './styles.css'
 import { FaUserCircle } from 'react-icons/fa'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
@@ -7,6 +6,8 @@ import ReactLoader from 'react-loading'
 
 import firebase from '../../services/Firebase'
 import useAuth from '../../hooks/useAuth'
+
+import { Container } from './styles'
 
 export default function Profile({ userData, setUserData }) {
   const { user } = useAuth()
@@ -67,7 +68,7 @@ export default function Profile({ userData, setUserData }) {
   })
 
   return (
-    <div className="profile-container">
+    <Container>
       <header>
         <h1>Perfil</h1>
       </header>
@@ -77,8 +78,8 @@ export default function Profile({ userData, setUserData }) {
           {formik.values.imgUrl ? (
             <img src={formik.values.imgUrl} alt={userData.name} />
           ) : (
-              <FaUserCircle size={200} color="var(--white)" />
-            )}
+            <FaUserCircle size={200} color="var(--white)" />
+          )}
           <label className="button" htmlFor="profile-image-upload">
             Selecione uma foto
           </label>
@@ -122,9 +123,7 @@ export default function Profile({ userData, setUserData }) {
           name="name"
           type="text"
           placeholder="Nome"
-          className={
-            formik.touched.name && formik.errors.name ? 'error' : ''
-          }
+          className={formik.touched.name && formik.errors.name ? 'error' : ''}
           value={formik.values.name || ''}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -178,7 +177,7 @@ export default function Profile({ userData, setUserData }) {
           <option value="other">Outro</option>
         </select>
 
-        <button className="button" type="submit" disabled={formik.isSubmitting}>
+        <button className="button" type="submit" disabled={!formik.isValid}>
           Salvar
         </button>
       </form>
@@ -190,6 +189,6 @@ export default function Profile({ userData, setUserData }) {
       {fineshedSubmit ? (
         <div className="success-message">Dados atualizados com sucesso</div>
       ) : null}
-    </div>
+    </Container>
   )
 }

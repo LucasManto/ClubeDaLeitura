@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import './styles.css'
 import { useParams, Route, Switch, useRouteMatch, Link } from 'react-router-dom'
 
+import Participants from './Participants'
+
 export default function Club({ userData }) {
   const { id } = useParams()
   const [clubData, setClubData] = useState({})
@@ -42,7 +44,7 @@ export default function Club({ userData }) {
             <h1>Sobre</h1>
           </Route>
           <Route path={`${match.path}/membros`}>
-            <h1>Participantes</h1>
+            <Participants clubId={id} />
           </Route>
           <Route path={`${match.path}/trocas`}>
             <h1>Trocas</h1>

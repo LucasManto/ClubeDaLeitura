@@ -45,46 +45,4 @@ export const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  .error-message {
-    text-align: center;
-    font-size: 14px;
-    font-weight: bold;
-    background: var(--red);
-    color: var(--white);
-    padding: 8px;
-    margin-bottom: 8px;
-    border-radius: 4px;
-  }
-
-  form {
-    flex: 1;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-
-    .error {
-      border-color: var(--red);
-
-      &::placeholder {
-        color: var(--red);
-      }
-    }
-
-    .input-group {
-      width: 100%;
-
-      input {
-        margin-bottom: 16px;
-      }
-    }
-
-    button {
-      width: 100%;
-      height: 60px;
-      margin-top: 16px;
-    }
-  }
 `
