@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import './styles.css'
 import { FaArrowLeft } from 'react-icons/fa'
 import { Route, Switch, useRouteMatch } from 'react-router-dom'
 
@@ -14,6 +13,8 @@ import Club from '../Club'
 
 import useAuth from '../../hooks/useAuth'
 
+import { Container, Welcome } from './styles'
+
 export default function Home() {
   const { user } = useAuth()
   const [userData, setUserData] = useState({})
@@ -21,18 +22,26 @@ export default function Home() {
 
   useEffect(() => {
     async function getClubs() {
-      const clubsIBelong = await firebase.firestore()
+      const clubsIBelong = await firebase
+        .firestore()
         .collection('clubs')
         .where('participants', 'array-contains', user.uid)
         .get()
-      const clubsIManage = await firebase.firestore()
+      const clubsIManage = await firebase
+        .firestore()
         .collection('clubs')
         .where('admins', 'array-contains', user.uid)
         .get()
 
       return {
-        clubsIBelong: clubsIBelong.docs.map(doc => ({ id: doc.id, ...doc.data() })),
-        clubsIManage: clubsIManage.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+        clubsIBelong: clubsIBelong.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })),
+        clubsIManage: clubsIManage.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })),
       }
     }
 
@@ -46,7 +55,7 @@ export default function Home() {
 
         setUserData({
           ...response.data(),
-          ...clubs
+          ...clubs,
         })
       }
     }
@@ -55,9 +64,9 @@ export default function Home() {
   }, [user])
 
   return (
-    <div className="home">
+    <Container>
       <Sidebar userData={userData} className="sidebar" />
-      <main className="content">
+      <main>
         <Switch>
           <Route path={`${match.path}/perfil`}>
             <Profile userData={userData} setUserData={setUserData} />
@@ -72,15 +81,15 @@ export default function Home() {
             <MyClubs userData={userData} />
           </Route>
           <Route path={`${match.path}`}>
-            <div className="welcome-container">
+            <Welcome>
               <h1>Olá, {userData.name}!</h1>
               <h2>Bem vindo(a) ao Clube da Leitura.</h2>
               <h3>Selecione um item do menu ao lado.</h3>
               <FaArrowLeft size={60} />
-            </div>
+            </Welcome>
           </Route>
         </Switch>
       </main>
-    </div>
+    </Container>
   )
 }
