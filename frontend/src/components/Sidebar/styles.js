@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const Container = styled.aside`
   display: flex;
@@ -21,6 +21,7 @@ export const Container = styled.aside`
       margin-bottom: 8px;
       width: 200px;
       height: 200px;
+      object-fit: cover;
     }
 
     span {
@@ -35,28 +36,28 @@ export const Container = styled.aside`
     font-size: 18px;
     font-weight: bold;
     text-decoration: none;
-  }
 
-  ul li {
-    border-bottom: 2px solid var(--light-blue);
-    padding: 8px;
-    background: var(--blue);
-  }
+    li {
+      border-bottom: 2px solid var(--light-blue);
+      padding: 8px;
+      background: var(--blue);
 
-  ul li a {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: var(--gray);
-    text-decoration: none;
-    transition: opacity 0.4s;
-  }
+      a {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: var(--gray);
+        text-decoration: none;
+        transition: opacity 0.4s;
 
-  ul li a:hover {
-    opacity: 0.6;
+        &:hover {
+          opacity: 0.6;
+        }
+      }
+    }
   }
 
   button.button {
     margin: 16px;
   }
-`;
+`
