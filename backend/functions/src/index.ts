@@ -8,18 +8,17 @@ dotenv.config({
 
 import * as Yup from 'yup'
 
-const serviceAccount = require(functions.config().credentialsPath ||
-  process.env.CREDENTIALS_PATH ||
-  '../clube-da-leitura-firebase-adminsdk-xcevm-318feb14f3.json')
+const serviceAccount = require(process.env.CREDENTIALS_PATH ||
+  '../clube-da-leitura-test-firebase-adminsdk-d4ovs-8beddd6505.json')
 
 const app = admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: functions.config().databaseURL || process.env.DATABASE_URL,
-  storageBucket: functions.config().storageBucket || process.env.STORAGE_BUCKET,
+  databaseURL: process.env.DATABASE_URL,
+  storageBucket: process.env.STORAGE_BUCKET,
 })
 const firestore = app.firestore()
 
-export const createUser = functions.https.onCall(async (data) => {
+export const createUser = functions.https.onCall(async data => {
   const userSchema = Yup.object({
     email: Yup.string()
       .email('Por favor, digite um email válido')
@@ -31,12 +30,14 @@ export const createUser = functions.https.onCall(async (data) => {
     surname: Yup.string().required('Gostaríamos de saber seu sobrenome também'),
     school: Yup.string().required('Gostaríamos de saber o nome da sua escola'),
     birthDate: Yup.date().required('Gostaríamos de saber quando você nasceu'),
-    gender: Yup.string().oneOf(['male', 'female', 'other']).required('Qual é seu gênero'),
+    gender: Yup.string()
+      .oneOf(['male', 'female', 'other'])
+      .required('Qual é seu gênero'),
   })
 
   try {
     userSchema.validateSync(data, {
-      abortEarly: false
+      abortEarly: false,
     })
 
     const { email, password, name, surname, birthDate, school, gender } = data
@@ -62,13 +63,4 @@ export const createUser = functions.https.onCall(async (data) => {
       )
     } else throw new functions.https.HttpsError('already-exists', error.message)
   }
-})
-
-export const getUserData = functions.https.onCall(async (data, context) => {
-  if (!context.auth) {
-    throw new functions.https.HttpsError('unauthenticated', 'User should be authenticated.')
-  }
-
-  const docSnapshot = await firestore.doc(`users/${context.auth.uid}`).get()
-  return docSnapshot.data()
 })
