@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import './styles.css'
 import { useParams, Route, Switch, useRouteMatch, Link } from 'react-router-dom'
 
 import Participants from './Participants'
+
+import { Container } from './styles'
 
 export default function Club({ userData }) {
   const { id } = useParams()
@@ -16,22 +17,29 @@ export default function Club({ userData }) {
         ? userData.clubsIBelong?.filter(club => club.id === id)
         : userData.clubsIManage?.filter(club => club.id === id)
 
-      if (club)
-        setClubData(club[0])
+      if (club) setClubData(club[0])
     }
   }, [userData, id])
 
   return (
-    <div className="club-container">
+    <Container>
       <h1>{clubData.name}</h1>
       <h2>{clubData.description}</h2>
 
       <header>
         <ul>
-          <Link to={`${match.url}`} ><li>Compartilhamentos</li></Link>
-          <Link to={`${match.url}/sobre`} ><li>Sobre o clube</li></Link>
-          <Link to={`${match.url}/membros`} ><li>Membros</li></Link>
-          <Link to={`${match.url}/trocas`} ><li>Visualizar trocas</li></Link>
+          <Link to={`${match.url}`}>
+            <li>Compartilhamentos</li>
+          </Link>
+          <Link to={`${match.url}/sobre`}>
+            <li>Sobre o clube</li>
+          </Link>
+          <Link to={`${match.url}/membros`}>
+            <li>Membros</li>
+          </Link>
+          <Link to={`${match.url}/trocas`}>
+            <li>Visualizar trocas</li>
+          </Link>
         </ul>
       </header>
 
@@ -51,6 +59,6 @@ export default function Club({ userData }) {
           </Route>
         </Switch>
       </main>
-    </div>
+    </Container>
   )
 }
