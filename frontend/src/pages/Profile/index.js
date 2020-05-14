@@ -62,7 +62,7 @@ export default function Profile({ userData, setUserData }) {
         imgUrl: url,
       })
 
-      setUserData(formik.values)
+      setUserData({ ...userData, ...formik.values })
       setFinishedSubmit(true)
     },
   })
