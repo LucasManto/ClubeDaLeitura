@@ -17,6 +17,29 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-width: 900px;
+
+    .club-image {
+      margin: 16px 0;
+      width: 100%;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* justify-content: space-around; */
+    }
+
+    #club-image-upload {
+      display: none;
+    }
+
+    .club-image img {
+      width: 100%;
+      height: 250px;
+      border-radius: 8px;
+      object-fit: cover;
+      margin-bottom: 8px;
+    }
 
     input {
       margin-top: 8px;
@@ -67,7 +90,7 @@ export const Container = styled.div`
     }
 
     button {
-      margin-bottom: 8px;
+      margin-bottom: 16px;
     }
   }
 `

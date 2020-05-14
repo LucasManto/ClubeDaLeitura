@@ -29,18 +29,24 @@ export default function Participants({ clubId }) {
 
   return (
     <Container>
-      <h1>Participants</h1>
+      <h1>Membros</h1>
 
       <ul>
         {participants.map(participant => (
           <li key={participant.id}>
-            {participant.imgUrl ? (
-              <img src={participant.imgUrl} alt={participant.name} />
-            ) : (
-              <FaUserCircle size={50} />
-            )}
-            {participant.name},{' '}
-            {differenceInYears(Date.now(), parseISO(participant.birthDate))}
+            <div>
+              {participant.imgUrl ? (
+                <img src={participant.imgUrl} alt={participant.name} />
+              ) : (
+                <FaUserCircle size={50} color={'#ffffff'} />
+              )}
+              <span>
+                {`${participant.name}, ${differenceInYears(
+                  Date.now(),
+                  parseISO(participant.birthDate)
+                )} anos`}
+              </span>
+            </div>
           </li>
         ))}
       </ul>

@@ -24,12 +24,24 @@ export const Container = styled.div`
       padding: 8px;
       box-shadow: 4px 4px 8px 0 rgba(0, 0, 0, 0.25);
       border-radius: 4px;
+      background: var(--yellow);
 
-      img {
-        width: 50px;
-        height: 50px;
-        object-fit: cover;
-        border-radius: 50%;
+      div {
+        display: flex;
+        align-items: center;
+
+        img,
+        svg {
+          width: 50px;
+          height: 50px;
+          object-fit: cover;
+          border-radius: 50%;
+        }
+
+        span {
+          margin-left: 8px;
+          font-weight: bold;
+        }
       }
     }
   }

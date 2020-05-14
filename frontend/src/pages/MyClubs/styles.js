@@ -12,6 +12,22 @@ export const Container = styled.div`
     color: var(--blue);
   }
 
+  header + div {
+    width: 100%;
+    max-width: 1000px;
+    padding: 0 24px;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+`
+
+export const ClubsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   h2 {
     font-size: 24px;
     font-weight: bold;
@@ -20,43 +36,55 @@ export const Container = styled.div`
   }
 
   .my-clubs-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 5px;
     margin-top: 16px;
-  }
-
-  .my-clubs-list a {
-    text-decoration: none;
-  }
-
-  .my-clubs-list .my-club-card {
     width: 100%;
-    min-width: 400px;
-    background: var(--white);
-    border-radius: 4px;
-    padding: 8px;
-    cursor: pointer;
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
-  }
-  .my-clubs-list .my-club-card:hover {
-    opacity: 0.9;
-  }
 
-  .my-clubs-list .my-club-card .info-title {
-    font-weight: bold;
-    font-size: 20px;
-    margin-bottom: 8px;
-    color: var(--yellow);
-  }
+    a {
+      text-decoration: none;
 
-  .my-clubs-list .my-club-card .info {
-    font-size: 14px;
-    font-weight: bold;
-    color: var(--blue);
-    margin-bottom: 4px;
+      & + a {
+        margin-top: 8px;
+      }
+    }
+
+    .my-club-card {
+      background: var(--white);
+      border-radius: 4px;
+      padding: 8px;
+      cursor: pointer;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      &:hover {
+        opacity: 0.9;
+      }
+
+      img {
+        object-fit: cover;
+        height: 100px;
+        width: 100%;
+        border-radius: 4px;
+        margin-bottom: 4px;
+      }
+
+      .info-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 4px;
+        color: var(--yellow);
+      }
+
+      .info {
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--blue);
+        margin-bottom: 4px;
+      }
+    }
   }
 `

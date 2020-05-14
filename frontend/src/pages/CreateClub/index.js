@@ -9,6 +9,8 @@ import useAuth from '../../hooks/useAuth'
 
 import { Container } from './styles'
 
+import bannerImg from '../../assets/banner.jpg'
+
 export default function CreateClub({ userData, setUserData }) {
   const { user } = useAuth()
   const [availableParticipants, setAvailableParticipants] = useState([])
@@ -26,6 +28,8 @@ export default function CreateClub({ userData, setUserData }) {
       description: '',
       participants: [],
       admins: [],
+      imgUrl: '',
+      img: null,
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Gostaríamos de saber o nome do seu clube'),
@@ -40,7 +44,7 @@ export default function CreateClub({ userData, setUserData }) {
         .min(1, 'O clube precisa de no mínimo 1 administrador(a).')
         .required(),
     }),
-    onSubmit: async ({ name, description, participants, admins }) => {
+    onSubmit: async ({ name, description, participants, admins, img }) => {
       const club = {
         name,
         description,
@@ -51,6 +55,23 @@ export default function CreateClub({ userData, setUserData }) {
         .firestore()
         .collection('clubs')
         .add(club)
+
+      if (img) {
+        await firebase
+          .storage()
+          .ref(`/clubs/${clubDocReference.id}/banner`)
+          .put(img)
+        const url = await firebase
+          .storage()
+          .ref(`/clubs/${clubDocReference.id}/banner`)
+          .getDownloadURL()
+
+        club.url = url
+
+        await clubDocReference.update({
+          banner: url,
+        })
+      }
 
       let clubsIBelong = [...userData.clubsIBelong]
       let clubsIManage = [...userData.clubsIManage]
@@ -146,6 +167,36 @@ export default function CreateClub({ userData, setUserData }) {
       </header>
 
       <form onSubmit={formik.handleSubmit}>
+        <div className="club-image">
+          {formik.values.imgUrl ? (
+            <img src={formik.values.imgUrl} alt={userData.name} />
+          ) : (
+            <img src={bannerImg} alt="banner" />
+          )}
+          <label className="button" htmlFor="club-image-upload">
+            Selecione uma imagem
+          </label>
+          <input
+            id="club-image-upload"
+            type="file"
+            accept="image/*"
+            onChange={e => {
+              const file = e.target.files[0]
+              const reader = new FileReader()
+
+              reader.onload = function (event) {
+                formik.setValues({
+                  ...formik.values,
+                  imgUrl: event.target.result,
+                  img: file,
+                })
+              }
+
+              reader.readAsDataURL(e.target.files[0])
+            }}
+          ></input>
+        </div>
+
         {formik.touched.name && formik.errors.name ? (
           <div className="error-message">{formik.errors.name}</div>
         ) : null}

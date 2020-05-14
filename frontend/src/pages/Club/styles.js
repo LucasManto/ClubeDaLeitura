@@ -1,20 +1,16 @@
 import styled from 'styled-components'
 
 export const Container = styled.div`
-  padding-top: 20px;
+  width: 100%;
 
   display: flex;
   flex-direction: column;
-  align-items: center;
-
-  h1 {
-    margin-bottom: 16px;
-  }
 
   header {
     width: 100%;
-    margin: 16px;
     height: 50px;
+    font-size: 16px;
+    font-weight: bold;
     background-color: var(--yellow);
 
     display: flex;
@@ -55,5 +51,28 @@ export const Container = styled.div`
 
   main {
     width: 100%;
+    padding-left: 16px;
+  }
+`
+
+export const Banner = styled.div`
+  height: 250px;
+  width: 100%;
+
+  img {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  h1 {
+    position: relative;
+    bottom: 32px;
+    width: 100%;
+    background: var(--yellow);
+    opacity: 0.8;
+    padding-left: 16px;
   }
 `

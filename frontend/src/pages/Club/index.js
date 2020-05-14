@@ -3,7 +3,7 @@ import { useParams, Route, Switch, useRouteMatch, Link } from 'react-router-dom'
 
 import Participants from './Participants'
 
-import { Container } from './styles'
+import { Container, Banner } from './styles'
 
 export default function Club({ userData }) {
   const { id } = useParams()
@@ -23,8 +23,10 @@ export default function Club({ userData }) {
 
   return (
     <Container>
-      <h1>{clubData.name}</h1>
-      <h2>{clubData.description}</h2>
+      <Banner>
+        <img src={clubData.banner} alt="banner" />
+        <h1>{clubData.name}</h1>
+      </Banner>
 
       <header>
         <ul>
