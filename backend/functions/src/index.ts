@@ -1,21 +1,8 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
-import * as dotenv from 'dotenv'
-
-dotenv.config({
-  path: process.env.NODE_ENV === 'test' ? '../.env.test' : '../.env',
-})
-
 import * as Yup from 'yup'
 
-const serviceAccount = require(process.env.CREDENTIALS_PATH ||
-  '../clube-da-leitura-test-firebase-adminsdk-d4ovs-8beddd6505.json')
-
-const app = admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: process.env.DATABASE_URL,
-  storageBucket: process.env.STORAGE_BUCKET,
-})
+const app = admin.initializeApp()
 const firestore = app.firestore()
 
 export const createUser = functions.https.onCall(async data => {
