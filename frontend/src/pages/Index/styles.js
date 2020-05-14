@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  
+
   header {
     position: fixed;
     top: 0;
@@ -15,11 +15,11 @@ export const Container = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+
     nav {
       ul {
         list-style: none;
-    
+
         display: flex;
 
         li {
@@ -70,11 +70,21 @@ export const Container = styled.div`
 
     #banner {
       padding: 0;
+      display: flex;
 
       img {
         position: absolute;
         opacity: 0.4;
         z-index: -1;
+        width: 100%;
+      }
+    }
+
+    #about {
+      padding: 0;
+      display: flex;
+
+      img {
         width: 100%;
       }
     }
@@ -89,4 +99,3 @@ export const Container = styled.div`
     }
   }
 `
-
