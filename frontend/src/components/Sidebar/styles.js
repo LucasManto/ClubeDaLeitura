@@ -6,7 +6,6 @@ export const Container = styled.aside`
   background: var(--light-blue);
   box-shadow: 1px 0px 8px 0px rgba(0, 0, 0, 0.75);
   z-index: 100;
-  min-width: 220px;
 
   header {
     display: flex;

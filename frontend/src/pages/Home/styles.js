@@ -7,7 +7,8 @@ export const Container = styled.div`
   background-color: var(--gray);
 
   aside {
-    width: 20%;
+    width: 300px;
+    min-width: 300px;
   }
 
   main {
