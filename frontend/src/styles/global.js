@@ -17,6 +17,7 @@ export default createGlobalStyle`
     padding: 0;
     outline: 0;
     box-sizing: border-box;
+    font-family: Pangolin, Arial;
   }
 
   html {
