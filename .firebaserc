@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "clube-da-leitura"
+    "default": "clube-da-leitura",
+    "development": "clube-da-leitura-test"
   }
 }
