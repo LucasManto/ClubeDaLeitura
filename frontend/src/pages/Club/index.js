@@ -5,6 +5,8 @@ import Participants from './Participants'
 
 import { Container, Banner } from './styles'
 
+import bannerImg from '../../assets/default-club-banner.png'
+
 export default function Club({ userData }) {
   const { id } = useParams()
   const [clubData, setClubData] = useState({})
@@ -24,7 +26,7 @@ export default function Club({ userData }) {
   return (
     <Container>
       <Banner>
-        <img src={clubData.banner} alt="banner" />
+        <img src={clubData.banner || bannerImg} alt="banner" />
         <h1>{clubData.name}</h1>
       </Banner>
 

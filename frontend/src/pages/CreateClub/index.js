@@ -9,7 +9,7 @@ import useAuth from '../../hooks/useAuth'
 
 import { Container } from './styles'
 
-import bannerImg from '../../assets/banner.jpg'
+import bannerImg from '../../assets/default-club-banner.png'
 
 export default function CreateClub({ userData, setUserData }) {
   const { user } = useAuth()

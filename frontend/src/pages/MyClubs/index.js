@@ -3,7 +3,7 @@ import { Link, useRouteMatch } from 'react-router-dom'
 
 import { Container, ClubsContainer } from './styles'
 
-import bannerImg from '../../assets/banner.jpg'
+import bannerImg from '../../assets/default-club-banner.png'
 
 export default function MyClubs({ userData }) {
   const match = useRouteMatch()
