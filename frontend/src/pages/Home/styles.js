@@ -13,6 +13,7 @@ export const Container = styled.div`
 
   main {
     flex-grow: 1;
+    padding-bottom: 16px;
   }
 `
 
