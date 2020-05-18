@@ -63,7 +63,7 @@ export default function SignUp() {
         if (error.code === 'already-exists') {
           formik.errors.email = 'Esse email já está sendo utilizado'
         } else if (error.code === 'invalid-argument') {
-          error.details.forEach((error) => {
+          error.details.forEach(error => {
             formik.errors[error.path] = error.message
           })
           console.log(error.details)
@@ -187,7 +187,7 @@ export default function SignUp() {
               onBlur={formik.handleBlur}
             >
               <option value="male">Masculino</option>
-              <option value="female">Feminio</option>
+              <option value="female">Feminino</option>
               <option value="other">Outro</option>
             </select>
           </div>
