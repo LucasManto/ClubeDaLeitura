@@ -6,6 +6,7 @@ export const Container = styled.div`
 
   header {
     position: fixed;
+    z-index: 100;
     top: 0;
     width: 100%;
     padding: 8px 16px;
@@ -50,52 +51,29 @@ export const Container = styled.div`
 
   main {
     section {
-      height: 600px;
-      padding: 8px 32px;
-      color: var(--dark-gray);
+      position: relative;
 
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      column-gap: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
 
-      h1 {
-        grid-column: 1 / span 2;
-        font-size: 40px;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
 
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      iframe {
+        position: absolute;
       }
     }
 
     #banner {
-      padding: 0;
-      display: flex;
-
       img {
-        position: absolute;
+        z-index: -10;
         opacity: 0.4;
-        z-index: -1;
-        width: 100%;
       }
-    }
-
-    #about {
-      padding: 0;
-      display: flex;
-
-      img {
-        width: 100%;
-      }
-    }
-
-    #how-it-works {
-      background: var(--yellow);
-      color: initial;
-    }
-
-    #get-in-touch {
-      background: var(--light-blue);
     }
   }
 `
