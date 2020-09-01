@@ -115,40 +115,4 @@ describe('Cloud functions', function () {
       }
     })
   })
-
-  describe('getUserData', function () {
-    let createUser
-    let getUserData
-    let response
-    let userId
-
-    beforeEach(async function () {
-      createUser = test.wrap(myFunctions.createUser)
-      getUserData = test.wrap(myFunctions.getUserData)
-
-      response = await createUser(userData)
-      userId = response.uid
-    })
-
-    it('should return user data', async function () {
-      response = await getUserData({}, { auth: { uid: userId } })
-      assert.containsAllKeys(response, [
-        'name',
-        'surname',
-        'school',
-        'birthDate',
-        'gender',
-      ])
-    })
-
-    it('should check user is authenticated', async function () {
-      try {
-        response = await getUserData({})
-        assert.fail()
-      } catch (error) {
-        assert.property(error, 'code')
-        assert.propertyVal(error, 'code', 'unauthenticated')
-      }
-    })
-  })
 })

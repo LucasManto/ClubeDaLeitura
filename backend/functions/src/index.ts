@@ -33,6 +33,7 @@ export const createUser = functions.https.onCall(async data => {
     await firestore.doc(`users/${user.uid}`).create({
       name,
       surname,
+      email,
       birthDate,
       school,
       gender,
