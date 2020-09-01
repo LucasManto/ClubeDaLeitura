@@ -23,17 +23,17 @@ export default function Index() {
         <nav>
           <ul>
             <li>
-              <ScrollLink to="about" offset={-64}>
+              <ScrollLink to="about" activeClass="active" spy={true} offset={-64}>
                 Sobre
               </ScrollLink>
             </li>
             <li>
-              <ScrollLink to="how-it-works" offset={-64}>
+              <ScrollLink to="how-it-works" activeClass="active" spy={true} offset={-64}>
                 Como funciona
               </ScrollLink>
             </li>
             <li>
-              <ScrollLink to="get-in-touch" offset={-64}>
+              <ScrollLink to="get-in-touch" activeClass="active" spy={true} offset={-64}>
                 Contato
               </ScrollLink>
             </li>
@@ -59,12 +59,13 @@ export default function Index() {
         <section id="how-it-works">
           <img src={howImg} alt="how it works" />
           <iframe
+            title="how-it-works-video"
             width="560"
             height="315"
             src="https://www.youtube.com/embed/_L98LDe9Bvw"
-            frameborder="0"
+            frameBorder="0"
             allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
+            allowFullScreen
           ></iframe>
         </section>
         <section id="get-in-touch">

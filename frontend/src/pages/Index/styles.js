@@ -37,6 +37,10 @@ export const Container = styled.div`
           a {
             text-decoration: none;
             color: var(--white);
+
+            &.active {
+              box-shadow: 0px 3px 0px 0px rgba(255, 255, 255, 0.75);
+            }
           }
         }
       }
