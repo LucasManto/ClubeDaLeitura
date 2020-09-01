@@ -4,27 +4,34 @@ import { differenceInYears, parseISO } from 'date-fns'
 
 import firebase from '../../../services/Firebase'
 
-import { Container } from './styles'
+import { Container, ParticipantCard, ParticipantCardHeader } from './styles'
 
 export default function Participants({ clubId }) {
   const [participants, setParticipants] = useState([])
 
   useEffect(() => {
-    async function loadParticipants() {
-      const querySnapshot = await firebase
-        .firestore()
-        .collection(`clubs/${clubId}/participants`)
-        .get()
-      const participantsDocs = querySnapshot.docs
-      const participantsData = participantsDocs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      }))
+    async function loadParticipantsData() {
+      const clubReference = firebase.firestore().doc(`clubs/${clubId}`)
+      const usersCollectionRef = firebase.firestore().collection('users')
 
-      setParticipants(participantsData)
+      const clubData = await clubReference.get()
+      const participantsId = clubData.get('participants')
+
+      const participantsDocs = participantsId.map(participant => {
+        return usersCollectionRef.doc(participant).get()
+      });
+
+      const participantsData = await Promise.all(participantsDocs)
+      const participantsIntroductions = await clubReference.collection('metadata').doc('introductions').get()
+
+      setParticipants(participantsData.map((participantData, index) => ({
+        id: participantData.id,
+        ...participantData.data(),
+        introduction: participantsIntroductions.get(participantData.id),
+      })))
     }
 
-    loadParticipants()
+    loadParticipantsData()
   }, [clubId])
 
   return (
@@ -34,19 +41,24 @@ export default function Participants({ clubId }) {
       <ul>
         {participants.map(participant => (
           <li key={participant.id}>
-            <div>
-              {participant.imgUrl ? (
-                <img src={participant.imgUrl} alt={participant.name} />
-              ) : (
-                <FaUserCircle size={50} color={'#ffffff'} />
-              )}
+            <ParticipantCard>
+              <ParticipantCardHeader>
+                {participant.imgUrl ? (
+                  <img src={participant.imgUrl} alt={participant.name} />
+                ) : (
+                    <FaUserCircle size={50} color={'#ffffff'} />
+                  )}
+                <span>
+                  {`${participant.name}, ${differenceInYears(
+                    Date.now(),
+                    parseISO(participant.birthDate)
+                  )} anos`}
+                </span>
+              </ParticipantCardHeader>
               <span>
-                {`${participant.name}, ${differenceInYears(
-                  Date.now(),
-                  parseISO(participant.birthDate)
-                )} anos`}
+                {participant.introduction || 'Essa pessoa ainda não se apresentou...'}
               </span>
-            </div>
+            </ParticipantCard>
           </li>
         ))}
       </ul>

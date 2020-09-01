@@ -2,12 +2,15 @@ import styled from 'styled-components'
 
 export const Container = styled.div`
   width: 100%;
-  height: 100;
-  padding: 0 16px;
+  height: 100%;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  h1 {
+    margin-bottom: 16px;
+  }
 
   ul {
     width: 100%;
@@ -25,24 +28,32 @@ export const Container = styled.div`
       box-shadow: 4px 4px 8px 0 rgba(0, 0, 0, 0.25);
       border-radius: 4px;
       background: var(--yellow);
-
-      div {
-        display: flex;
-        align-items: center;
-
-        img,
-        svg {
-          width: 50px;
-          height: 50px;
-          object-fit: cover;
-          border-radius: 50%;
-        }
-
-        span {
-          margin-left: 8px;
-          font-weight: bold;
-        }
-      }
     }
   }
 `
+
+export const ParticipantCard = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const ParticipantCardHeader = styled.div`
+  flex: 1;
+  margin-bottom: 16px;
+
+  display: flex;
+  align-items: center;
+
+  img,
+  svg {
+    width: 50px;
+    height: 50px;
+    /* object-fit: cover; */
+    border-radius: 50%;
+  }
+
+  span {
+    margin-left: 8px;
+    font-weight: bold;
+  }
+`;
