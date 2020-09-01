@@ -33,12 +33,14 @@ export const Container = styled.div`
       display: none;
     }
 
-    .club-image img {
-      width: 100%;
-      height: 250px;
-      border-radius: 8px;
-      object-fit: cover;
-      margin-bottom: 8px;
+    .club-image {
+      img {
+        width: 100%;
+        height: 250px;
+        border-radius: 8px;
+        object-fit: cover;
+        margin-bottom: 8px;
+      }
     }
 
     input {
@@ -80,13 +82,21 @@ export const Container = styled.div`
       margin-bottom: 8px;
     }
 
-    .participants-container span {
-      font-size: 18px;
-      cursor: pointer;
-    }
+    .participants-container {
+      span {
+        font-size: 18px;
+        cursor: pointer;
+        width: 100%;
+        overflow: hidden;
 
-    .participants-container span:hover {
-      opacity: 0.8;
+        &:hover {
+          opacity: 0.8;
+        }
+
+        & + span {
+          margin-top: 8px;
+        }
+      }
     }
 
     button {

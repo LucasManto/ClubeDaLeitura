@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { useFormik } from 'formik'
+import React, { useState } from 'react'
+import { useFormik, } from 'formik'
 import * as Yup from 'yup'
 import ReactLoader from 'react-loading'
 import { useHistory } from 'react-router-dom'
@@ -23,11 +23,17 @@ export default function CreateClub({ userData, setUserData }) {
   const history = useHistory()
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       name: '',
       description: '',
       participants: [],
-      admins: [],
+      admins: [{
+        id: user?.uid || '',
+        name: userData.name,
+        surname: userData.surname,
+        email: 'lucashmantovani@hotmail.com'
+      }],
       imgUrl: '',
       img: null,
     },
@@ -93,32 +99,9 @@ export default function CreateClub({ userData, setUserData }) {
         clubsIManage,
       })
 
-      const batch = firebase.firestore().batch()
-      participants.forEach(participant => {
-        const participantDocReference = clubDocReference
-          .collection('participants')
-          .doc(participant.id)
-
-        batch.set(participantDocReference, participant)
-      })
-      await batch.commit()
-
       history.push('/home/meus-clubes')
     },
   })
-
-  useEffect(() => {
-    formik.setValues({
-      ...formik.values,
-      admins: [
-        {
-          id: user?.uid || '',
-          name: userData.name,
-          surname: userData.surname,
-        },
-      ],
-    })
-  }, [user, userData])
 
   function handleAddParticipant(participant) {
     formik.setValues({
@@ -168,11 +151,7 @@ export default function CreateClub({ userData, setUserData }) {
 
       <form onSubmit={formik.handleSubmit}>
         <div className="club-image">
-          {formik.values.imgUrl ? (
-            <img src={formik.values.imgUrl} alt={userData.name} />
-          ) : (
-            <img src={bannerImg} alt="banner" />
-          )}
+          <img src={formik.values.imgUrl || bannerImg} alt="banner" />
           <label className="button" htmlFor="club-image-upload">
             Selecione uma imagem
           </label>
@@ -235,9 +214,13 @@ export default function CreateClub({ userData, setUserData }) {
         <p className="form-title">Participantes</p>
         <input
           type="text"
-          placeholder="Digite um nome para buscarmos"
+          placeholder="Digite um email para buscarmos"
           onChange={e => {
-            const nameQuery = e.target.value
+            const emailQuery = e.target.value
+
+            if (emailQuery === '') {
+              return
+            }
 
             if (typingTimeout) {
               clearTimeout(typingTimeout)
@@ -246,13 +229,13 @@ export default function CreateClub({ userData, setUserData }) {
             setTypingTimeout(
               setTimeout(async () => {
                 setIsSearchingParticipant(true)
-                const nameQuerySnapshot = await firebase
+                const emailQuerySnapshot = await firebase
                   .firestore()
                   .collection('users')
-                  .where('name', '>=', nameQuery)
-                  .where('name', '<=', nameQuery + '\uf8ff')
+                  .where('email', '>=', emailQuery)
+                  .where('email', '<=', emailQuery + '\uf8ff')
                   .get()
-                const users = nameQuerySnapshot.docs
+                const users = emailQuerySnapshot.docs
                   .map(doc => ({
                     id: doc.id,
                     ...doc.data(),
@@ -277,17 +260,16 @@ export default function CreateClub({ userData, setUserData }) {
             {isSearchingParticipant ? (
               <ReactLoader type="bubbles" height={32} color="#f3d250" />
             ) : (
-              availableParticipants.map(participant => (
-                <span
-                  key={participant.id}
-                  onClick={() => handleAddParticipant(participant)}
-                  className="participant-name"
-                >
-                  {participant.name +
-                    (participant.surname ? ` ${participant.surname}` : '')}
-                </span>
-              ))
-            )}
+                availableParticipants.map(participant => (
+                  <span
+                    key={participant.id}
+                    onClick={() => handleAddParticipant(participant)}
+                    className="participant-name"
+                  >
+                    {`${participant.email} (${participant.name} ${participant.surname})`}
+                  </span>
+                ))
+              )}
           </div>
           <div className="current-participants">
             <h2>Participantes do clube</h2>
@@ -297,8 +279,7 @@ export default function CreateClub({ userData, setUserData }) {
                 onClick={() => handleRemoveParticipant(participant)}
                 className="participant-name"
               >
-                {participant.name +
-                  (participant.surname ? ` ${participant.surname}` : '')}
+                {`${participant.email} (${participant.name} ${participant.surname})`}
               </span>
             ))}
           </div>
@@ -307,9 +288,13 @@ export default function CreateClub({ userData, setUserData }) {
         <p className="form-title">Administradores</p>
         <input
           type="text"
-          placeholder="Digite um nome para buscarmos"
+          placeholder="Digite um email para buscarmos"
           onChange={e => {
-            const nameQuery = e.target.value
+            const emailQuery = e.target.value
+
+            if (emailQuery === '') {
+              return
+            }
 
             if (typingTimeout) {
               clearTimeout(typingTimeout)
@@ -318,17 +303,16 @@ export default function CreateClub({ userData, setUserData }) {
             setTypingTimeout(
               setTimeout(async () => {
                 setIsSearchingAdmin(true)
-                const nameQuerySnapshot = await firebase
+                const emailQuerySnapshot = await firebase
                   .firestore()
                   .collection('users')
-                  .where('name', '>=', nameQuery)
-                  .where('name', '<=', nameQuery + '\uf8ff')
+                  .where('email', '>=', emailQuery)
+                  .where('email', '<=', emailQuery + '\uf8ff')
                   .get()
-                const users = nameQuerySnapshot.docs
+                const users = emailQuerySnapshot.docs
                   .map(doc => ({
                     id: doc.id,
-                    name: doc.get('name'),
-                    surname: doc.get('surname'),
+                    ...doc.data(),
                   }))
                   .filter(
                     participant =>
@@ -347,17 +331,16 @@ export default function CreateClub({ userData, setUserData }) {
             {isSearchingAdmin ? (
               <ReactLoader type="bubbles" height={32} color="#f3d250" />
             ) : (
-              availableUsers.map(participant => (
-                <span
-                  key={participant.id}
-                  onClick={() => handleAddAdmin(participant)}
-                  className="participant-name"
-                >
-                  {participant.name +
-                    (participant.surname ? ` ${participant.surname}` : '')}
-                </span>
-              ))
-            )}
+                availableUsers.map(participant => (
+                  <span
+                    key={participant.id}
+                    onClick={() => handleAddAdmin(participant)}
+                    className="participant-name"
+                  >
+                    {`${participant.email} (${participant.name} ${participant.surname})`}
+                  </span>
+                ))
+              )}
           </div>
           <div className="current-participants">
             <h2>Administradores do clube</h2>
@@ -367,8 +350,7 @@ export default function CreateClub({ userData, setUserData }) {
                 onClick={() => handleRemoveAdmin(participant)}
                 className="participant-name"
               >
-                {participant.name +
-                  (participant.surname ? ` ${participant.surname}` : '')}
+                {`${participant.email} (${participant.name} ${participant.surname})`}
               </span>
             ))}
           </div>
