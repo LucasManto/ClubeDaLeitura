@@ -49,6 +49,14 @@ export const Container = styled.div`
       max-width: 1200px;
     }
 
+    input + label {
+      margin-top: 16px;
+      margin-left: 8px;
+      font-size: 16px;
+      align-self: flex-start;
+      color: var(--blue);
+    }
+
     .form-title {
       font-size: 24px;
       font-weight: bold;

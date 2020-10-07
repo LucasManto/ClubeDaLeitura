@@ -38,7 +38,8 @@ export default createGlobalStyle`
   }
 
   form input,
-  form select {
+  form select,
+  form textarea {
     width: 100%;
     height: 60px;
     color: #333;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, Route, Switch, useRouteMatch, Link } from 'react-router-dom'
 
 import Participants from './Participants'
+import Feed from './Feed'
 
 import { Container, Banner } from './styles'
 
@@ -50,7 +51,7 @@ export default function Club({ userData }) {
       <main>
         <Switch>
           <Route exact path={`${match.path}/`}>
-            <h1>Compartilhamentos</h1>
+            <Feed clubId={id} />
           </Route>
           <Route path={`${match.path}/sobre`}>
             <h1>Sobre</h1>

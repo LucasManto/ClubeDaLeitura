@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useFormik, } from 'formik'
 import * as Yup from 'yup'
 import ReactLoader from 'react-loading'
 import { useHistory } from 'react-router-dom'
+import { format } from 'date-fns';
 
 import firebase from '../../services/Firebase'
 import useAuth from '../../hooks/useAuth'
@@ -20,6 +21,8 @@ export default function CreateClub({ userData, setUserData }) {
   const [isSearchingAdmin, setIsSearchingAdmin] = useState(false)
   const [typingTimeout, setTypingTimeout] = useState(0)
 
+  const currentDate = useMemo(() => new Date(), [])
+
   const history = useHistory()
 
   const formik = useFormik({
@@ -32,10 +35,11 @@ export default function CreateClub({ userData, setUserData }) {
         id: user?.uid || '',
         name: userData.name,
         surname: userData.surname,
-        email: 'lucashmantovani@hotmail.com'
+        email: userData.email
       }],
       imgUrl: '',
       img: null,
+      introductionLimit: format(currentDate, "yyyy-MM-dd'T'HH:mm")
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Gostaríamos de saber o nome do seu clube'),
@@ -49,8 +53,11 @@ export default function CreateClub({ userData, setUserData }) {
       admins: Yup.array()
         .min(1, 'O clube precisa de no mínimo 1 administrador(a).')
         .required(),
+      introductionLimit: Yup.date()
+        .min(currentDate, 'A data não pode ser anterior a data atual')
+        .required()
     }),
-    onSubmit: async ({ name, description, participants, admins, img }) => {
+    onSubmit: async ({ name, description, participants, admins, img, introductionLimit }) => {
       const club = {
         name,
         description,
@@ -78,6 +85,12 @@ export default function CreateClub({ userData, setUserData }) {
           banner: url,
         })
       }
+
+      await clubDocReference.collection('metadata').doc('introductions').set({});
+      await clubDocReference.collection('metadata').doc('choices').set({});
+      await clubDocReference.collection('metadata').doc('dates').set({
+        introduction_limit: new Date(introductionLimit)
+      });
 
       let clubsIBelong = [...userData.clubsIBelong]
       let clubsIManage = [...userData.clubsIManage]
@@ -188,6 +201,9 @@ export default function CreateClub({ userData, setUserData }) {
         {formik.touched.admins && formik.errors.admins ? (
           <div className="error-message">{formik.errors.admins}</div>
         ) : null}
+        {formik.touched.introductionLimit && formik.errors.introductionLimit ? (
+          <div className="error-message">{formik.errors.introductionLimit}</div>
+        ) : null}
         <input
           name="name"
           type="text"
@@ -207,6 +223,20 @@ export default function CreateClub({ userData, setUserData }) {
               : ''
           }
           value={formik.values.description || ''}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+        />
+        <label htmlFor="introductionLimit">Data limite para introdução</label>
+        <input
+          name="introductionLimit"
+          type="datetime-local"
+          min={format(currentDate, "yyyy-MM-dd HH:mm")}
+          className={
+            formik.touched.introductionLimit && formik.errors.introductionLimit
+              ? 'error'
+              : ''
+          }
+          value={formik.values.introductionLimit || ''}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
         />
