@@ -20,7 +20,12 @@ import {
 import { FaArrowRight } from 'react-icons/fa'
 
 function Feed({ clubId }) {
-  const [isCheckingConditions, setIsCheckingConditions] = useState(true);
+  const [clubData, setClubData] = useState();
+  const [introductions, setIntroductions] = useState([]);
+  const [choices, setChoices] = useState();
+  const [participants, setParticipants] = useState();
+
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
   const [isParticipant, setIsParticipant] = useState(true);
   const [isFirstTime, setIsFirstTime] = useState(true);
@@ -29,62 +34,114 @@ function Feed({ clubId }) {
   const [introductionDate, setIntroductionDate] = useState();
   const [currentDate, setCurrentDate] = useState();
 
-  const [choices, setChoices] = useState([]);
   const [allChoicesMade, setAllChoicesMade] = useState(false);
 
   const { user } = useAuth();
 
   useEffect(() => {
-    async function checkIsParticipant() {
+    async function getClubData() {
       const clubDoc = await firebase.firestore().doc(`clubs/${clubId}`).get();
-      const clubParticipants = clubDoc.get('participants');
 
-      setIsParticipant(clubParticipants.includes(user?.uid));
+      return clubDoc.data();
     }
 
-    async function checkIsFirstTime() {
+    async function getIntroductions() {
       const introductionDoc = await firebase.firestore().doc(`clubs/${clubId}/metadata/introductions`).get();
 
-      setIsFirstTime(!introductionDoc.data()[user?.uid])
+      return introductionDoc.data();
     }
 
-    async function checkHasChosenParticipant() {
+    async function getChoices() {
       const choicesDoc = await firebase.firestore().doc(`clubs/${clubId}/metadata/choices`).get();
 
-      setHasChosenParticipant(!!choicesDoc.data()[user?.uid])
+      return choicesDoc.data();
     }
 
-    async function checkAllChoicesAreMade() {
-      const choicesDoc = await firebase.firestore().doc(`clubs/${clubId}/metadata/choices`).get();
-      const choices = choicesDoc.data();
+    async function getData() {
+      const [clubDataResult, introductionsResult, choicesResult] = await Promise.all([
+        getClubData(),
+        getIntroductions(),
+        getChoices()
+      ]);
 
-      const clubDoc = await firebase.firestore().doc(`clubs/${clubId}`).get();
-      const participants = clubDoc.get('participants');
+      setClubData(clubDataResult);
+      setIntroductions(introductionsResult);
+      setChoices(choicesResult);
 
-      const choicesArray = Object.keys(choices).map(participant => {
-        return {
-          participant,
-          chosen: choices[participant]
+      setIsLoadingData(false);
+    }
+
+    getData();
+  }, [clubId]);
+
+  useEffect(() => {
+    if (!clubData) {
+      return;
+    }
+
+    async function getParticipants() {
+      const participantsIds = clubData.participants;
+
+      const participantsDocs = await Promise.all(participantsIds.map(participantId => {
+        return firebase.firestore().doc(`users/${participantId}`).get();
+      }));
+
+      const participantsData = {};
+      participantsDocs.forEach(participant => {
+        participantsData[participant.id] = {
+          id: participant.id,
+          ...participant.data()
         };
       });
 
-      setChoices(choicesArray);
+      setParticipants(participantsData);
+    }
+
+    getParticipants();
+  }, [clubData]);
+
+  useEffect(() => {
+    function checkIsParticipant() {
+      if (!clubData || !user) {
+        return;
+      }
+
+      const clubParticipants = clubData.participants;
+
+      setIsParticipant(clubParticipants.includes(user.uid));
+    }
+
+    function checkIsFirstTime() {
+      if (!introductions || !user) {
+        return;
+      }
+
+      setIsFirstTime(!introductions[user.uid]);
+    }
+
+    function checkHasChosenParticipant() {
+      if (!choices || !user) {
+        return;
+      }
+
+      setHasChosenParticipant(!!choices[user.uid]);
+    }
+
+    function checkAllChoicesAreMade() {
+      if (!clubData || !choices || !user) {
+        return;
+      }
+
+      const participants = clubData.participants;
+
       setAllChoicesMade(participants.length === Object.keys(choices).length)
     }
 
-    async function checkConditions() {
-      await Promise.all([
-        checkIsParticipant(),
-        checkIsFirstTime(),
-        checkHasChosenParticipant(),
-        checkAllChoicesAreMade(),
-      ]);
-
-      setIsCheckingConditions(false);
-    }
-
-    checkConditions();
-  }, [user, clubId])
+    checkIsParticipant();
+    checkIsFirstTime();
+    checkHasChosenParticipant();
+    checkAllChoicesAreMade();
+  }, [user, clubData, choices, introductions])
 
   useEffect(() => {
     async function getLimitDates() {
@@ -112,7 +169,22 @@ function Feed({ clubId }) {
     return isBefore(currentDate, introductionDate)
   }, [currentDate, introductionDate]);
 
-  if (isCheckingConditions) {
+  const abstractsData = useMemo(() => {
+    if (!choices || !participants) {
+      return [];
+    }
+
+    return Object.keys(choices).map(participantId => {
+      const chosenParticipantId = choices[participantId];
+
+      return {
+        participant: participants[participantId],
+        chosenParticipant: participants[chosenParticipantId]
+      };
+    })
+  }, [choices, participants]);
+
+  if (isLoadingData) {
     return (
       <Container>
         <ReactLoader type="bubbles" width={128} color="#f3d250" />
@@ -145,18 +217,18 @@ function Feed({ clubId }) {
             <FeedContainer>
               <h2>Aqui você poderá enviar seu resumo e ver os resumos já enviados!</h2>
               <AbstractsContainer>
-                {choices.map(choice => {
+                {abstractsData.map((abstractData, i) => {
                   return (
-                    <Abstract>
+                    <Abstract key={i}>
                       <ParticipantsContainer>
                         <ParticipantInfo>
-                          <img src="https://firebasestorage.googleapis.com/v0/b/clube-da-leitura-test.appspot.com/o/users%2FtCMoZuP35pOS7Uiiaqh6V5IexOR2?alt=media&token=93ff7356-abf8-4575-8ba2-3b989007f32c" alt="Lucas Mantovani" />
-                          <span>{choice.participant}</span>
+                          <img src={abstractData.participant.imgUrl} alt={`${abstractData.participant.name} ${abstractData.participant.surname}`} />
+                          <span>{`${abstractData.participant.name} ${abstractData.participant.surname}`}</span>
                         </ParticipantInfo>
                         <FaArrowRight size={32} fontWeight="normal" />
                         <ParticipantInfo>
-                          <img src="https://firebasestorage.googleapis.com/v0/b/clube-da-leitura-test.appspot.com/o/users%2FtCMoZuP35pOS7Uiiaqh6V5IexOR2?alt=media&token=93ff7356-abf8-4575-8ba2-3b989007f32c" alt="Lucas Mantovani" />
-                          <span>{choice.chosen}</span>
+                          <img src={abstractData.chosenParticipant.imgUrl} alt={`${abstractData.chosenParticipant.name} ${abstractData.chosenParticipant.surname}`} />
+                          <span>{`${abstractData.chosenParticipant.name} ${abstractData.chosenParticipant.surname}`}</span>
                         </ParticipantInfo>
                       </ParticipantsContainer>
 

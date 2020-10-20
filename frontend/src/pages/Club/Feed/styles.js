@@ -63,7 +63,7 @@ export const ParticipantsContainer = styled.div`
 `;
 
 export const ParticipantInfo = styled.div`
-  padding: 16px;
+  padding: 8px;
   overflow: hidden;
 
   display: flex;
