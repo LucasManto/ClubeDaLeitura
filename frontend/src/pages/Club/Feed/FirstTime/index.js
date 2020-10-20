@@ -15,7 +15,7 @@ function FirstTime({
   isFirstTime,
   setIsFirstTime,
   introductionDate,
-  isBeforeIntroductionDate
+  isBeforeIntroductionLimit
 }) {
   const { user } = useAuth();
 
@@ -42,9 +42,9 @@ function FirstTime({
       } catch (error) {
       }
     },
-  })
+  });
 
-  if (!isParticipant || !isFirstTime || !isBeforeIntroductionDate) {
+  if (!isParticipant || !isFirstTime || !isBeforeIntroductionLimit) {
     return null;
   }
 

@@ -16,7 +16,7 @@ function ChooseParticipant({
   clubId,
   isParticipant,
   isFirstTime,
-  isBeforeIntroductionDate,
+  isBeforeIntroductionLimit,
   hasChosenParticipant,
   setHasChosenParticipant
 }) {
@@ -24,7 +24,7 @@ function ChooseParticipant({
   const [selectedParticipantID, setSelectedParticipantID] = useState('');
 
   const { user } = useAuth();
-  
+
   const handleSelectParticipant = useCallback((participantID) => {
     setSelectedParticipantID(participantID);
   }, []);
@@ -80,7 +80,7 @@ function ChooseParticipant({
     }
   }, [clubId, user, isFirstTime, hasChosenParticipant]);
 
-  if (!isParticipant || (isFirstTime && isBeforeIntroductionDate) || hasChosenParticipant) {
+  if (!isParticipant || (isFirstTime && isBeforeIntroductionLimit) || hasChosenParticipant) {
     return null
   }
 
