@@ -1,7 +1,15 @@
 import React from 'react'
 import { Link, useRouteMatch } from 'react-router-dom'
 
-import { Container, ClubsContainer } from './styles'
+import {
+  Container,
+  ClubList,
+  ClubCard,
+  ClubHeader,
+  ClubTitle,
+  AdminBadge,
+  ClubDescription
+} from './styles'
 
 import bannerImg from '../../assets/default-club-banner.png'
 
@@ -15,37 +23,22 @@ export default function MyClubs({ userData }) {
       </header>
 
       <div>
-        <ClubsContainer>
-          <h2>Clubes que administro</h2>
+        <ClubList>
+          {userData.clubsIBelong?.map(club => (
+            <Link key={club.id} to={`${match.url}/${club.id}`}>
+              <ClubCard>
+                <img src={club.banner || bannerImg} alt="" />
 
-          <div className="my-clubs-list">
-            {userData.clubsIManage?.map(club => (
-              <Link key={club.id} to={`${match.url}/${club.id}`}>
-                <div className="my-club-card">
-                  <img src={club.banner || bannerImg} alt="" />
-                  <span className="info-title">{club.name}</span>
-                  <span className="info">{club.description}</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </ClubsContainer>
+                <ClubHeader>
+                  <ClubTitle>{club.name}</ClubTitle>
+                  {userData.clubsIManage.find(clubIManage => clubIManage.id === club.id) && <AdminBadge>Admin</AdminBadge>}
+                </ClubHeader>
 
-        <ClubsContainer>
-          <h2>Clubes que faço parte</h2>
-
-          <div className="my-clubs-list">
-            {userData.clubsIBelong?.map(club => (
-              <Link key={club.id} to={`${match.url}/${club.id}`}>
-                <div className="my-club-card">
-                  <img src={club.banner || bannerImg} alt="" />
-                  <span className="info-title">{club.name}</span>
-                  <span className="info">{club.description}</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </ClubsContainer>
+                <ClubDescription>{club.description}</ClubDescription>
+              </ClubCard>
+            </Link>
+          ))}
+        </ClubList>
       </div>
     </Container>
   )
