@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { isBefore } from 'date-fns'
 import ReactLoader from 'react-loading'
+import { FaArrowCircleRight, FaUserCircle } from 'react-icons/fa';
 
 import FirstTime from './FirstTime'
 import ChooseParticipant from './ChooseParticipant'
@@ -10,12 +11,18 @@ import useAuth from '../../../hooks/useAuth'
 import firebase from '../../../services/Firebase'
 
 import {
-  Abstract,
-  AbstractsContainer,
   Container,
   FeedContainer,
+  InteractionsContainer,
+  Interaction,
+  ParticipantsContainer,
   ParticipantInfo,
-  ParticipantsContainer
+  InteractionModalContainer,
+  InteractionModal,
+  Message,
+  MessageHeader,
+  InputContainer,
+  VideoContainer
 } from './styles'
 import { FaArrowRight } from 'react-icons/fa'
 
@@ -23,6 +30,9 @@ function Feed({ clubId }) {
   const [clubData, setClubData] = useState();
   const [introductions, setIntroductions] = useState([]);
   const [choices, setChoices] = useState();
+  const [abstracts, setAbstracts] = useState();
+  const [responses, setResponses] = useState();
+
   const [participants, setParticipants] = useState();
 
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -35,6 +45,14 @@ function Feed({ clubId }) {
   const [currentDate, setCurrentDate] = useState();
 
   const [allChoicesMade, setAllChoicesMade] = useState(false);
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [interactionData, setInteractionData] = useState({});
+  const [abstract, setAbstract] = useState('');
+
+  const [uploadedVideoUrl, setUploadedVideoUrl] = useState('');
+  const [uploadedVideoFile, setUploadedVideoFile] = useState();
+  const [isSendingVideo, setIsSendingVideo] = useState(false);
 
   const { user } = useAuth();
 
@@ -57,16 +75,38 @@ function Feed({ clubId }) {
       return choicesDoc.data();
     }
 
+    async function getAbstracts() {
+      const abstractsDoc = await firebase.firestore().doc(`clubs/${clubId}/metadata/abstracts`).get();
+
+      return abstractsDoc.data();
+    }
+
+    async function getResponses() {
+      const responsesDoc = await firebase.firestore().doc(`clubs/${clubId}/metadata/responses`).get();
+
+      return responsesDoc.data();
+    }
+
     async function getData() {
-      const [clubDataResult, introductionsResult, choicesResult] = await Promise.all([
+      const [
+        clubDataResult,
+        introductionsResult,
+        choicesResult,
+        abstractsResult,
+        responsesResult
+      ] = await Promise.all([
         getClubData(),
         getIntroductions(),
-        getChoices()
+        getChoices(),
+        getAbstracts(),
+        getResponses()
       ]);
 
       setClubData(clubDataResult);
       setIntroductions(introductionsResult);
       setChoices(choicesResult);
+      setAbstracts(abstractsResult);
+      setResponses(responsesResult);
 
       setIsLoadingData(false);
     }
@@ -169,8 +209,8 @@ function Feed({ clubId }) {
     return isBefore(currentDate, introductionDate)
   }, [currentDate, introductionDate]);
 
-  const abstractsData = useMemo(() => {
-    if (!choices || !participants) {
+  const interactionsData = useMemo(() => {
+    if (!choices || !participants || !abstracts || !responses) {
       return [];
     }
 
@@ -179,10 +219,64 @@ function Feed({ clubId }) {
 
       return {
         participant: participants[participantId],
-        chosenParticipant: participants[chosenParticipantId]
+        chosenParticipant: participants[chosenParticipantId],
+        abstract: abstracts[participantId],
+        response: responses[chosenParticipantId]
       };
     })
-  }, [choices, participants]);
+  }, [choices, participants, abstracts, responses]);
+
+  const handleSeeInteractions = useCallback((interactionData) => {
+    setInteractionData(interactionData);
+    setIsModalVisible(true);
+  }, []);
+
+  const handleSendAbstract = useCallback(async () => {
+    await firebase.firestore().doc(`clubs/${clubId}/metadata/abstracts`).update({
+      [user.uid]: abstract
+    });
+
+    setInteractionData(currentInteractionData => {
+      return {
+        ...currentInteractionData,
+        abstract
+      };
+    });
+
+    const newAbstracts = {
+      ...abstracts,
+      [user.uid]: abstract
+    };
+
+    setAbstracts(newAbstracts);
+  }, [abstracts, abstract, clubId, user]);
+
+  const handleSendResponse = useCallback(async () => {
+    setIsSendingVideo(true)
+    const fileRef = firebase.storage().ref(`/clubs/${clubId}/responses/${user.uid}`);
+    await fileRef.put(uploadedVideoFile);
+    const url = await fileRef.getDownloadURL();
+
+    await firebase.firestore().doc(`clubs/${clubId}/metadata/responses`).update({
+      [user.uid]: url
+    });
+
+    setIsSendingVideo(false);
+
+    setInteractionData(currentInteractionData => {
+      return {
+        ...currentInteractionData,
+        response: url
+      };
+    });
+
+    const newResponses = {
+      ...responses,
+      [user.uid]: url
+    };
+
+    setResponses(newResponses);
+  }, [responses, clubId, user, uploadedVideoFile]);
 
   if (isLoadingData) {
     return (
@@ -216,27 +310,37 @@ function Feed({ clubId }) {
           (
             <FeedContainer>
               <h2>Aqui você poderá enviar seu resumo e ver os resumos já enviados!</h2>
-              <AbstractsContainer>
-                {abstractsData.map((abstractData, i) => {
+              <InteractionsContainer>
+                {interactionsData.map((interactionData, i) => {
                   return (
-                    <Abstract key={i}>
+                    <Interaction key={i}>
                       <ParticipantsContainer>
                         <ParticipantInfo>
-                          <img src={abstractData.participant.imgUrl} alt={`${abstractData.participant.name} ${abstractData.participant.surname}`} />
-                          <span>{`${abstractData.participant.name} ${abstractData.participant.surname}`}</span>
+                          {interactionData.participant.imgUrl ? (
+                            <img src={interactionData.participant.imgUrl} alt={`${interactionData.participant.name} ${interactionData.participant.surname}`} />
+                          ) : (
+                              <FaUserCircle size={200} color="var(--white)" />
+                            )
+                          }
+                          <span>{`${interactionData.participant.name} ${interactionData.participant.surname}`}</span>
                         </ParticipantInfo>
                         <FaArrowRight size={32} fontWeight="normal" />
                         <ParticipantInfo>
-                          <img src={abstractData.chosenParticipant.imgUrl} alt={`${abstractData.chosenParticipant.name} ${abstractData.chosenParticipant.surname}`} />
-                          <span>{`${abstractData.chosenParticipant.name} ${abstractData.chosenParticipant.surname}`}</span>
+                          {interactionData.chosenParticipant.imgUrl ? (
+                            <img src={interactionData.chosenParticipant.imgUrl} alt={`${interactionData.chosenParticipant.name} ${interactionData.chosenParticipant.surname}`} />
+                          ) : (
+                              <FaUserCircle size={200} color="var(--white)" />
+                            )
+                          }
+                          <span>{`${interactionData.chosenParticipant.name} ${interactionData.chosenParticipant.surname}`}</span>
                         </ParticipantInfo>
                       </ParticipantsContainer>
 
-                      <button>Ver resumo</button>
-                    </Abstract>
+                      <button onClick={() => handleSeeInteractions(interactionData)}>Ver</button>
+                    </Interaction>
                   );
                 })}
-              </AbstractsContainer>
+              </InteractionsContainer>
             </FeedContainer>
           ) :
           (
@@ -245,6 +349,110 @@ function Feed({ clubId }) {
             </h2>
           )
       }
+
+      {isModalVisible && (
+        <InteractionModalContainer onClick={() => setIsModalVisible(false)}>
+          <InteractionModal onClick={(event) => event.stopPropagation()}>
+            <button id="close-modal" onClick={() => setIsModalVisible(false)}>X</button>
+
+            <Message>
+              <MessageHeader>
+                {interactionData.participant.imgUrl ? (
+                  <img src={interactionData.participant.imgUrl} alt={`${interactionData.participant.name} ${interactionData.participant.surname}`} />
+                ) : (
+                    <FaUserCircle size={200} color="var(--white)" />
+                  )
+                }
+                <span>Resumo de {interactionData.participant.name}</span>
+              </MessageHeader>
+              <span>
+                {interactionData.abstract || 'Aguardando envio...'}
+              </span>
+            </Message>
+
+            <Message>
+              <MessageHeader>
+                {interactionData.chosenParticipant.imgUrl ? (
+                  <img src={interactionData.chosenParticipant.imgUrl} alt={`${interactionData.chosenParticipant.name} ${interactionData.chosenParticipant.surname}`} />
+                ) : (
+                    <FaUserCircle size={200} color="var(--white)" />
+                  )
+                }
+                <span>Resposta de {interactionData.chosenParticipant.name}</span>
+              </MessageHeader>
+              {
+                interactionData.response ? (
+                  <VideoContainer>
+                    <video src={interactionData.response} controls></video>
+                  </VideoContainer>
+                ) : (
+                    <span>Aguardando envio...</span>
+                  )
+              }
+            </Message>
+
+            {!interactionData.abstract &&
+              interactionData.participant.id === user.uid && (
+                <InputContainer>
+                  <textarea
+                    placeholder="Escreva aqui seu resumo"
+                    value={abstract}
+                    onChange={(e) => setAbstract(e.target.value)}
+                  ></textarea>
+                  <button
+                    onClick={handleSendAbstract}
+                    disabled={abstract.length === 0}
+                  >
+                    <FaArrowCircleRight size={32} />
+                  </button>
+                </InputContainer>
+              )
+            }
+
+            {interactionData.abstract && !interactionData.response &&
+              interactionData.chosenParticipant.id === user.uid && (
+                <>
+                  {uploadedVideoUrl && (
+                    <VideoContainer>
+                      <video src={uploadedVideoUrl} controls></video>
+                    </VideoContainer>
+                  )}
+                  <InputContainer>
+                    <label htmlFor="response-upload">
+                      Selecione o vídeo resposta
+                    </label>
+                    <input
+                      id="response-upload"
+                      type="file"
+                      accept="video/*"
+                      onChange={e => {
+                        const file = e.target.files[0]
+                        const reader = new FileReader()
+
+                        reader.onload = function (event) {
+                          setUploadedVideoUrl(event.target.result);
+                          setUploadedVideoFile(file);
+                        }
+
+                        reader.readAsDataURL(e.target.files[0])
+                      }}
+                    ></input>
+                    <button
+                      onClick={handleSendResponse}
+                      disabled={uploadedVideoUrl.length === 0}
+                    >
+                      <FaArrowCircleRight size={32} />
+                    </button>
+                  </InputContainer>
+                  {isSendingVideo &&
+                    <ReactLoader id="sending-image-loader" type="bubbles" width={64} color="#5da2d5" />
+                  }
+                </>
+              )
+            }
+          </InteractionModal>
+        </InteractionModalContainer>
+      )}
     </Container>
   );
 }

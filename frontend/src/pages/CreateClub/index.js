@@ -91,6 +91,8 @@ export default function CreateClub({ userData, setUserData }) {
       await clubDocReference.collection('metadata').doc('dates').set({
         introduction_limit: new Date(introductionLimit)
       });
+      await clubDocReference.collection('metadata').doc('abstracts').set({});
+      await clubDocReference.collection('metadata').doc('responses').set({});
 
       let clubsIBelong = [...userData.clubsIBelong]
       let clubsIManage = [...userData.clubsIManage]
