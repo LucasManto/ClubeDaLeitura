@@ -45,4 +45,8 @@ export const FormContainer = styled.div`
 
   display: flex;
   flex-direction: column;
+
+  a {
+    color: var(--yellow);
+  }
 `

@@ -13,6 +13,7 @@ import useAuth from './hooks/useAuth'
 import Index from './pages/Index'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
+import ForgotPassword from './pages/ForgotPassword'
 
 import Home from './pages/Home'
 
@@ -31,6 +32,9 @@ export default function App() {
           </Route>
           <Route path="/signup">
             {user ? <Redirect to="/home" /> : <SignUp />}
+          </Route>
+          <Route path="/forgot-password">
+            {user ? <Redirect to="/home" /> : <ForgotPassword />}
           </Route>
           <Route path="/">{user ? <Redirect to="/home" /> : <Index />}</Route>
         </Switch>

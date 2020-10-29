@@ -87,7 +87,7 @@ export default function SignIn() {
             <ReactLoader type="bubbles" height={32} color="#f3d250" />
           ) : null}
 
-          <Link to="/">Esqueci minha senha</Link>
+          <Link to="/forgot-password">Esqueci minha senha</Link>
         </form>
       </FormContainer>
 
