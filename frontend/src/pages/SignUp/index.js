@@ -6,6 +6,8 @@ import ReactLoading from 'react-loading'
 
 import firebase from '../../services/Firebase'
 
+import logoImg from '../../assets/logo.png';
+
 import { Container, FormContainer } from './styles'
 
 export default function SignUp() {
@@ -76,7 +78,7 @@ export default function SignUp() {
     <Container>
       <header>
         <Link to="/">
-          <img src="https://picsum.photos/id/1062/50" alt="Clube da Leitura" />
+          <img src={logoImg} alt="Clube da Leitura" width={50} height={50} />
         </Link>
       </header>
       <h1>Bem vindo(a)</h1>

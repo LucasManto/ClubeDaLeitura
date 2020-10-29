@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Link as ScrollLink } from 'react-scroll'
 
+import logoImg from '../../assets/logo.png'
 import bannerImg from '../../assets/banner.jpg'
 import aboutImg from '../../assets/about.png'
 import whoImg from '../../assets/who-we-are.png'
@@ -16,7 +17,7 @@ export default function Index() {
         <img
           width={50}
           height={50}
-          src="https://picsum.photos/id/1062/50"
+          src={logoImg}
           alt="Roda de Leitura"
         />
 
