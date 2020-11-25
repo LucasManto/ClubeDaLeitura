@@ -78,6 +78,10 @@ export const ParticipantInfo = styled.div`
     margin-right: 8px;
   }
 
+  svg {
+    margin-right: 8px;
+  }
+
   span {
     font-size: 16px;
     font-weight: bold;
@@ -165,6 +169,10 @@ export const MessageHeader = styled.div`
       height: 50px;
       border-radius: 50%;
       margin-right: 8px;
+  }
+
+  svg {
+    margin-right: 8px;
   }
 `;
 
