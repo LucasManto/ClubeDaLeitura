@@ -309,7 +309,10 @@ function Feed({ clubId }) {
         !isParticipant || allChoicesMade ?
           (
             <FeedContainer>
-              <h2>Aqui você poderá enviar seu resumo e ver os resumos já enviados!</h2>
+              {isParticipant ?
+                <h2>Aqui você poderá enviar seu resumo e ver os resumos já enviados!</h2> :
+                <h2>Aqui você poderá ver os resumos já enviados!</h2>
+              }
               <InteractionsContainer>
                 {interactionsData.sort((interactionA, interactionB) => {
                   if (interactionA.participant.id === user.uid || interactionA.chosenParticipant.id === user.uid) {
