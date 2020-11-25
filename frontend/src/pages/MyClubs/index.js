@@ -24,6 +24,26 @@ export default function MyClubs({ userData }) {
 
       <div>
         <ClubList>
+          {userData.clubsIManage?.filter(club => {
+            const doIBelong = userData.clubsIBelong?.find(clubIBelong => clubIBelong.id === club.id);
+
+            if (!doIBelong) {
+              return true;
+            }
+          }).map(club => (
+            <Link key={club.id} to={`${match.url}/${club.id}`}>
+              <ClubCard>
+                <img src={club.banner || bannerImg} alt="" />
+
+                <ClubHeader>
+                  <ClubTitle>{club.name}</ClubTitle>
+                  <AdminBadge>Admin</AdminBadge>
+                </ClubHeader>
+
+                <ClubDescription>{club.description}</ClubDescription>
+              </ClubCard>
+            </Link>
+          ))}
           {userData.clubsIBelong?.map(club => (
             <Link key={club.id} to={`${match.url}/${club.id}`}>
               <ClubCard>
