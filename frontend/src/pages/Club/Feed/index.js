@@ -311,7 +311,15 @@ function Feed({ clubId }) {
             <FeedContainer>
               <h2>Aqui você poderá enviar seu resumo e ver os resumos já enviados!</h2>
               <InteractionsContainer>
-                {interactionsData.map((interactionData, i) => {
+                {interactionsData.sort((interactionA, interactionB) => {
+                  if (interactionA.participant.id === user.uid || interactionA.chosenParticipant.id === user.uid) {
+                    return -1;
+                  } else if (interactionB.participant.id === user.uid || interactionB.chosenParticipant.id === user.uid) {
+                    return 1;
+                  } else {
+                    return 0;
+                  }
+                }).map((interactionData, i) => {
                   return (
                     <Interaction key={i}>
                       <ParticipantsContainer>
