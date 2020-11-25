@@ -36,14 +36,8 @@ export default function Club({ userData }) {
           <Link to={`${match.url}`}>
             <li>Compartilhamentos</li>
           </Link>
-          <Link to={`${match.url}/sobre`}>
-            <li>Sobre o clube</li>
-          </Link>
           <Link to={`${match.url}/membros`}>
             <li>Membros</li>
-          </Link>
-          <Link to={`${match.url}/trocas`}>
-            <li>Visualizar trocas</li>
           </Link>
         </ul>
       </header>
@@ -53,14 +47,8 @@ export default function Club({ userData }) {
           <Route exact path={`${match.path}/`}>
             <Feed clubId={id} />
           </Route>
-          <Route path={`${match.path}/sobre`}>
-            <h1>Sobre</h1>
-          </Route>
           <Route path={`${match.path}/membros`}>
             <Participants clubId={id} />
-          </Route>
-          <Route path={`${match.path}/trocas`}>
-            <h1>Trocas</h1>
           </Route>
         </Switch>
       </main>
