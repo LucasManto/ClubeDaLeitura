@@ -248,9 +248,9 @@ export default function CreateClub({ userData, setUserData }) {
           type="text"
           placeholder="Digite um email para buscarmos"
           onChange={e => {
-            const emailQuery = e.target.value
+            const queryTerm = e.target.value
 
-            if (emailQuery === '') {
+            if (queryTerm === '') {
               return
             }
 
@@ -264,10 +264,23 @@ export default function CreateClub({ userData, setUserData }) {
                 const emailQuerySnapshot = await firebase
                   .firestore()
                   .collection('users')
-                  .where('email', '>=', emailQuery)
-                  .where('email', '<=', emailQuery + '\uf8ff')
+                  .where('email', '>=', queryTerm)
+                  .where('email', '<=', queryTerm + '\uf8ff')
                   .get()
-                const users = emailQuerySnapshot.docs
+                const nameQuerySnapshot = await firebase
+                  .firestore()
+                  .collection('users')
+                  .where('name', '>=', queryTerm)
+                  .where('name', '<=', queryTerm + '\uf8ff')
+                  .get()
+                const surnameQuerySnapshot = await firebase
+                  .firestore()
+                  .collection('users')
+                  .where('surname', '>=', queryTerm)
+                  .where('surname', '<=', queryTerm + '\uf8ff')
+                  .get()
+
+                const emailResults = emailQuerySnapshot.docs
                   .map(doc => ({
                     id: doc.id,
                     ...doc.data(),
@@ -278,6 +291,39 @@ export default function CreateClub({ userData, setUserData }) {
                         p => participant.id === p.id
                       )
                   )
+                const nameResults = nameQuerySnapshot.docs
+                  .map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                  }))
+                  .filter(
+                    participant =>
+                      !formik.values.participants.find(
+                        p => participant.id === p.id
+                      )
+                  )
+                const surnameResults = surnameQuerySnapshot.docs
+                  .map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                  }))
+                  .filter(
+                    participant =>
+                      !formik.values.participants.find(
+                        p => participant.id === p.id
+                      )
+                  )
+
+                const usersWithDuplicates = [...new Set([...emailResults, ...nameResults, ...surnameResults])]
+                const usersIds = new Set();
+                const users = usersWithDuplicates.filter(availableUser => {
+                  if (usersIds.has(availableUser.id)) {
+                    return false;
+                  } else {
+                    usersIds.add(availableUser.id);
+                    return true;
+                  }
+                })
 
                 setAvailableParticipants(users)
                 setIsSearchingParticipant(false)
@@ -322,9 +368,9 @@ export default function CreateClub({ userData, setUserData }) {
           type="text"
           placeholder="Digite um email para buscarmos"
           onChange={e => {
-            const emailQuery = e.target.value
+            const queryTerm = e.target.value
 
-            if (emailQuery === '') {
+            if (queryTerm === '') {
               return
             }
 
@@ -338,18 +384,66 @@ export default function CreateClub({ userData, setUserData }) {
                 const emailQuerySnapshot = await firebase
                   .firestore()
                   .collection('users')
-                  .where('email', '>=', emailQuery)
-                  .where('email', '<=', emailQuery + '\uf8ff')
+                  .where('email', '>=', queryTerm)
+                  .where('email', '<=', queryTerm + '\uf8ff')
                   .get()
-                const users = emailQuerySnapshot.docs
+                const nameQuerySnapshot = await firebase
+                  .firestore()
+                  .collection('users')
+                  .where('name', '>=', queryTerm)
+                  .where('name', '<=', queryTerm + '\uf8ff')
+                  .get()
+                const surnameQuerySnapshot = await firebase
+                  .firestore()
+                  .collection('users')
+                  .where('surname', '>=', queryTerm)
+                  .where('surname', '<=', queryTerm + '\uf8ff')
+                  .get()
+
+                const emailResults = emailQuerySnapshot.docs
                   .map(doc => ({
                     id: doc.id,
                     ...doc.data(),
                   }))
                   .filter(
                     participant =>
-                      !formik.values.admins.find(p => participant.id === p.id)
+                      !formik.values.admins.find(
+                        p => participant.id === p.id
+                      )
                   )
+                const nameResults = nameQuerySnapshot.docs
+                  .map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                  }))
+                  .filter(
+                    participant =>
+                      !formik.values.admins.find(
+                        p => participant.id === p.id
+                      )
+                  )
+                const surnameResults = surnameQuerySnapshot.docs
+                  .map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                  }))
+                  .filter(
+                    participant =>
+                      !formik.values.admins.find(
+                        p => participant.id === p.id
+                      )
+                  )
+
+                const usersWithDuplicates = [...new Set([...emailResults, ...nameResults, ...surnameResults])]
+                const usersIds = new Set();
+                const users = usersWithDuplicates.filter(availableUser => {
+                  if (usersIds.has(availableUser.id)) {
+                    return false;
+                  } else {
+                    usersIds.add(availableUser.id);
+                    return true;
+                  }
+                })
 
                 setAvailableUsers(users)
                 setIsSearchingAdmin(false)
