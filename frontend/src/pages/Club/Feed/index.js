@@ -371,7 +371,7 @@ function Feed({ clubId }) {
                 {interactionData.participant.imgUrl ? (
                   <img src={interactionData.participant.imgUrl} alt={`${interactionData.participant.name} ${interactionData.participant.surname}`} />
                 ) : (
-                    <FaUserCircle size={200} color="var(--white)" />
+                    <FaUserCircle size={50} color="var(--white)" />
                   )
                 }
                 <span>Resumo de {interactionData.participant.name}</span>
@@ -386,7 +386,7 @@ function Feed({ clubId }) {
                 {interactionData.chosenParticipant.imgUrl ? (
                   <img src={interactionData.chosenParticipant.imgUrl} alt={`${interactionData.chosenParticipant.name} ${interactionData.chosenParticipant.surname}`} />
                 ) : (
-                    <FaUserCircle size={200} color="var(--white)" />
+                    <FaUserCircle size={50} color="var(--white)" />
                   )
                 }
                 <span>Resposta de {interactionData.chosenParticipant.name}</span>
