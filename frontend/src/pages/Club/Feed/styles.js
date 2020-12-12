@@ -76,6 +76,7 @@ export const ParticipantInfo = styled.div`
     height: 50px;
     border-radius: 50%;
     margin-right: 8px;
+    object-fit: cover;
   }
 
   svg {
@@ -165,10 +166,11 @@ export const MessageHeader = styled.div`
   align-items: center;
 
   img {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      margin-right: 8px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 8px;
+    object-fit: cover;
   }
 
   svg {

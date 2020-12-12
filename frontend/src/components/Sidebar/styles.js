@@ -20,7 +20,7 @@ export const Container = styled.aside`
       margin-bottom: 8px;
       width: 200px;
       height: 200px;
-      /* object-fit: cover; */
+      object-fit: cover;
     }
 
     span {
