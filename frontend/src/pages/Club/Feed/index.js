@@ -389,7 +389,7 @@ function Feed({ clubId }) {
                     <FaUserCircle size={50} color="var(--white)" />
                   )
                 }
-                <span>Resposta de {interactionData.participant.name}</span>
+                <span>Vídeo-resposta de {interactionData.participant.name}</span>
               </MessageHeader>
               {
                 interactionData.response ? (
@@ -430,7 +430,7 @@ function Feed({ clubId }) {
                   )}
                   <InputContainer>
                     <label htmlFor="response-upload">
-                      Selecione o vídeo resposta
+                      Selecione o vídeo-resposta
                     </label>
                     <input
                       id="response-upload"
