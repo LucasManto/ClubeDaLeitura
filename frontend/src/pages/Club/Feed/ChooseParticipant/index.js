@@ -80,7 +80,7 @@ function ChooseParticipant({
     }
   }, [clubId, user, isFirstTime, hasChosenParticipant]);
 
-  if (!isParticipant || (isFirstTime && isBeforeIntroductionLimit) || hasChosenParticipant) {
+  if (!isParticipant || isBeforeIntroductionLimit === undefined || (isFirstTime && isBeforeIntroductionLimit) || hasChosenParticipant) {
     return null
   }
 
@@ -111,7 +111,7 @@ function ChooseParticipant({
         ))}
       </AvailableParticipantsContainer>
 
-      <button onClick={handleChooseParticipant}>Continuar</button>
+      <button disabled={!selectedParticipantID} onClick={handleChooseParticipant}>Continuar</button>
     </>
   );
 }

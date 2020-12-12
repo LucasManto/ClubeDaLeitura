@@ -197,9 +197,9 @@ function Feed({ clubId }) {
   }, [clubId])
 
   useEffect(() => {
-    fetch("https://worldtimeapi.org/api/ip")
+    fetch("http://worldclockapi.com/api/json/utc/now")
       .then(response => response.json())
-      .then(result => setCurrentDate(new Date(result.datetime)))
+      .then(result => setCurrentDate(new Date(result.currentDateTime)))
   }, [])
 
   const isBeforeIntroductionLimit = useMemo(() => {
@@ -368,13 +368,13 @@ function Feed({ clubId }) {
 
             <Message>
               <MessageHeader>
-                {interactionData.participant.imgUrl ? (
-                  <img src={interactionData.participant.imgUrl} alt={`${interactionData.participant.name} ${interactionData.participant.surname}`} />
+                {interactionData.chosenParticipant.imgUrl ? (
+                  <img src={interactionData.chosenParticipant.imgUrl} alt={`${interactionData.chosenParticipant.name} ${interactionData.chosenParticipant.surname}`} />
                 ) : (
                     <FaUserCircle size={50} color="var(--white)" />
                   )
                 }
-                <span>Resumo de {interactionData.participant.name}</span>
+                <span>Resumo de {interactionData.chosenParticipant.name}</span>
               </MessageHeader>
               <span>
                 {interactionData.abstract || 'Aguardando envio...'}
@@ -383,13 +383,13 @@ function Feed({ clubId }) {
 
             <Message>
               <MessageHeader>
-                {interactionData.chosenParticipant.imgUrl ? (
-                  <img src={interactionData.chosenParticipant.imgUrl} alt={`${interactionData.chosenParticipant.name} ${interactionData.chosenParticipant.surname}`} />
+                {interactionData.participant.imgUrl ? (
+                  <img src={interactionData.participant.imgUrl} alt={`${interactionData.participant.name} ${interactionData.participant.surname}`} />
                 ) : (
                     <FaUserCircle size={50} color="var(--white)" />
                   )
                 }
-                <span>Resposta de {interactionData.chosenParticipant.name}</span>
+                <span>Resposta de {interactionData.participant.name}</span>
               </MessageHeader>
               {
                 interactionData.response ? (
@@ -403,7 +403,7 @@ function Feed({ clubId }) {
             </Message>
 
             {!interactionData.abstract &&
-              interactionData.participant.id === user.uid && (
+              interactionData.chosenParticipant.id === user.uid && (
                 <InputContainer>
                   <textarea
                     placeholder="Escreva aqui seu resumo"
@@ -421,7 +421,7 @@ function Feed({ clubId }) {
             }
 
             {interactionData.abstract && !interactionData.response &&
-              interactionData.chosenParticipant.id === user.uid && (
+              interactionData.participant.id === user.uid && (
                 <>
                   {uploadedVideoUrl && (
                     <VideoContainer>

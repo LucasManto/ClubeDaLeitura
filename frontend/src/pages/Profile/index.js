@@ -59,7 +59,7 @@ export default function Profile({ userData, setUserData }) {
         school,
         birthDate,
         gender,
-        imgUrl: url,
+        imgUrl: url || null,
       })
 
       setUserData({ ...userData, ...formik.values })
