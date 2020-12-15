@@ -220,8 +220,8 @@ function Feed({ clubId }) {
       return {
         participant: participants[participantId],
         chosenParticipant: participants[chosenParticipantId],
-        abstract: abstracts[participantId],
-        response: responses[chosenParticipantId]
+        abstract: abstracts[chosenParticipantId],
+        response: responses[participantId]
       };
     })
   }, [choices, participants, abstracts, responses]);
