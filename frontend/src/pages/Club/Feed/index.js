@@ -19,6 +19,7 @@ import {
   ParticipantInfo,
   InteractionModalContainer,
   InteractionModal,
+  InteractionModalContent,
   Message,
   MessageHeader,
   InputContainer,
@@ -363,104 +364,106 @@ function Feed({ clubId }) {
 
       {isModalVisible && (
         <InteractionModalContainer onClick={() => setIsModalVisible(false)}>
-          <InteractionModal onClick={(event) => event.stopPropagation()}>
-            <button id="close-modal" onClick={() => setIsModalVisible(false)}>X</button>
+          <InteractionModal>
+            <InteractionModalContent onClick={(event) => event.stopPropagation()}>
+              <button id="close-modal" onClick={() => setIsModalVisible(false)}>X</button>
 
-            <Message>
-              <MessageHeader>
-                {interactionData.chosenParticipant.imgUrl ? (
-                  <img src={interactionData.chosenParticipant.imgUrl} alt={`${interactionData.chosenParticipant.name} ${interactionData.chosenParticipant.surname}`} />
-                ) : (
-                    <FaUserCircle size={50} color="var(--white)" />
-                  )
-                }
-                <span>Resumo de {interactionData.chosenParticipant.name}</span>
-              </MessageHeader>
-              <span>
-                {interactionData.abstract || 'Aguardando envio...'}
-              </span>
-            </Message>
+              <Message>
+                <MessageHeader>
+                  {interactionData.chosenParticipant.imgUrl ? (
+                    <img src={interactionData.chosenParticipant.imgUrl} alt={`${interactionData.chosenParticipant.name} ${interactionData.chosenParticipant.surname}`} />
+                  ) : (
+                      <FaUserCircle size={50} color="var(--white)" />
+                    )
+                  }
+                  <span>Resumo de {interactionData.chosenParticipant.name}</span>
+                </MessageHeader>
+                <span>
+                  {interactionData.abstract || 'Aguardando envio...'}
+                </span>
+              </Message>
 
-            <Message>
-              <MessageHeader>
-                {interactionData.participant.imgUrl ? (
-                  <img src={interactionData.participant.imgUrl} alt={`${interactionData.participant.name} ${interactionData.participant.surname}`} />
-                ) : (
-                    <FaUserCircle size={50} color="var(--white)" />
-                  )
-                }
-                <span>Vídeo-resposta de {interactionData.participant.name}</span>
-              </MessageHeader>
-              {
-                interactionData.response ? (
-                  <VideoContainer>
-                    <video src={interactionData.response} controls></video>
-                  </VideoContainer>
-                ) : (
-                    <span>Aguardando envio...</span>
-                  )
-              }
-            </Message>
-
-            {!interactionData.abstract &&
-              interactionData.chosenParticipant.id === user.uid && (
-                <InputContainer>
-                  <textarea
-                    placeholder="Escreva aqui seu resumo"
-                    value={abstract}
-                    onChange={(e) => setAbstract(e.target.value)}
-                  ></textarea>
-                  <button
-                    onClick={handleSendAbstract}
-                    disabled={abstract.length === 0}
-                  >
-                    <FaArrowCircleRight size={32} />
-                  </button>
-                </InputContainer>
-              )
-            }
-
-            {interactionData.abstract && !interactionData.response &&
-              interactionData.participant.id === user.uid && (
-                <>
-                  {uploadedVideoUrl && (
+              <Message>
+                <MessageHeader>
+                  {interactionData.participant.imgUrl ? (
+                    <img src={interactionData.participant.imgUrl} alt={`${interactionData.participant.name} ${interactionData.participant.surname}`} />
+                  ) : (
+                      <FaUserCircle size={50} color="var(--white)" />
+                    )
+                  }
+                  <span>Vídeo-resposta de {interactionData.participant.name}</span>
+                </MessageHeader>
+                {
+                  interactionData.response ? (
                     <VideoContainer>
-                      <video src={uploadedVideoUrl} controls></video>
+                      <video src={interactionData.response} controls></video>
                     </VideoContainer>
-                  )}
+                  ) : (
+                      <span>Aguardando envio...</span>
+                    )
+                }
+              </Message>
+
+              {!interactionData.abstract &&
+                interactionData.chosenParticipant.id === user.uid && (
                   <InputContainer>
-                    <label htmlFor="response-upload">
-                      Selecione o vídeo-resposta
-                    </label>
-                    <input
-                      id="response-upload"
-                      type="file"
-                      accept="video/*"
-                      onChange={e => {
-                        const file = e.target.files[0]
-                        const reader = new FileReader()
-
-                        reader.onload = function (event) {
-                          setUploadedVideoUrl(event.target.result);
-                          setUploadedVideoFile(file);
-                        }
-
-                        reader.readAsDataURL(e.target.files[0])
-                      }}
-                    ></input>
+                    <textarea
+                      placeholder="Escreva aqui seu resumo"
+                      value={abstract}
+                      onChange={(e) => setAbstract(e.target.value)}
+                    ></textarea>
                     <button
-                      onClick={handleSendResponse}
-                      disabled={uploadedVideoUrl.length === 0}
+                      onClick={handleSendAbstract}
+                      disabled={abstract.length === 0}
                     >
                       <FaArrowCircleRight size={32} />
                     </button>
                   </InputContainer>
-                  {isSendingVideo &&
-                    <ReactLoader id="sending-image-loader" type="bubbles" width={64} color="#5da2d5" />
-                  }
-                </>
-              )
-            }
+                )
+              }
+
+              {interactionData.abstract && !interactionData.response &&
+                interactionData.participant.id === user.uid && (
+                  <>
+                    {uploadedVideoUrl && (
+                      <VideoContainer>
+                        <video src={uploadedVideoUrl} controls></video>
+                      </VideoContainer>
+                    )}
+                    <InputContainer>
+                      <label htmlFor="response-upload">
+                        Selecione o vídeo-resposta
+                      </label>
+                      <input
+                        id="response-upload"
+                        type="file"
+                        accept="video/*"
+                        onChange={e => {
+                          const file = e.target.files[0]
+                          const reader = new FileReader()
+
+                          reader.onload = function (event) {
+                            setUploadedVideoUrl(event.target.result);
+                            setUploadedVideoFile(file);
+                          }
+
+                          reader.readAsDataURL(e.target.files[0])
+                        }}
+                      ></input>
+                      <button
+                        onClick={handleSendResponse}
+                        disabled={uploadedVideoUrl.length === 0}
+                      >
+                        <FaArrowCircleRight size={32} />
+                      </button>
+                    </InputContainer>
+                    {isSendingVideo &&
+                      <ReactLoader id="sending-image-loader" type="bubbles" width={64} color="#5da2d5" />
+                    }
+                  </>
+                )
+              }
+            </InteractionModalContent>
           </InteractionModal>
         </InteractionModalContainer>
       )}

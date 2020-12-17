@@ -106,10 +106,14 @@ export const InteractionModalContainer = styled.div`
 export const InteractionModal = styled.div`
   width: 100%;
   max-width: 600px;
+  max-height: 80%;
   background-color: var(--yellow);
   border-radius: 8px;
   padding: 24px;
+  overflow: auto;
+`;
 
+export const InteractionModalContent = styled.div`
   display: flex;
   flex-direction: column;
 
@@ -139,7 +143,6 @@ export const InteractionModal = styled.div`
 
 export const Message = styled.div`
   width: 70%;
-  min-height: 20%;
   background-color: var(--light-blue);
   border-radius: 8px;
   margin-bottom: 16px;
