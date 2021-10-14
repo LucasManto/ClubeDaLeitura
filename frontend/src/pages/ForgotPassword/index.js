@@ -16,7 +16,7 @@ function ForgotPassword() {
     onSubmit: async ({ email }) => {
       try {
         await firebase.auth().sendPasswordResetEmail(email, {
-          url: 'https://localhost:3000'
+          url: 'https://clube-da-leitura.web.app'
         });
 
         setIsEmailSent(true);

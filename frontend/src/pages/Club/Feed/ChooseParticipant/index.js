@@ -47,12 +47,29 @@ function ChooseParticipant({
 
       const chosenParticipants = Object.values(choices);
 
-      const filteredAvailableParticipants = participants.filter(participant => {
-        const isCurrentParticipant = participant === user?.uid;
-        const isAlreadyChosen = chosenParticipants.includes(participant);
-        const choseCurrentParticipant = choices[participant] === user?.uid;
+      const groups = [];
+      Object.keys(choices).forEach(participant => {
+        let groupsWithParticipants = groups.filter(group => group.has(participant) || group.has(choices[participant]));
 
-        if (isCurrentParticipant || isAlreadyChosen || choseCurrentParticipant) {
+        if (groupsWithParticipants.length === 0) {
+          groups.push(new Set([participant, choices[participant]]));
+        } else if (groupsWithParticipants.length === 1) {
+          groupsWithParticipants[0].add(participant);
+          groupsWithParticipants[0].add(choices[participant]);
+        } else {
+          groupsWithParticipants[0] = new Set([...groupsWithParticipants[0], ...groupsWithParticipants[1]]);
+          groupsWithParticipants.splice(1, 1);
+        }
+      });
+
+      const currentParticipant = user?.uid;
+      const filteredAvailableParticipants = participants.filter(participant => {
+        const isCurrentParticipant = participant === currentParticipant;
+        const isAlreadyChosen = chosenParticipants.includes(participant);
+        const choseCurrentParticipant = choices[participant] === currentParticipant;
+        const belongsToSameSet = chosenParticipants.length < (participants.length - 1) && groups.some(set => set.has(currentParticipant) && set.has(participant));
+
+        if (isCurrentParticipant || isAlreadyChosen || choseCurrentParticipant || belongsToSameSet) {
           return false;
         } else {
           return true;
@@ -98,8 +115,8 @@ function ChooseParticipant({
               {participant.imgUrl ? (
                 <img src={participant.imgUrl} alt={participant.name} />
               ) : (
-                  <FaUserCircle size={50} color={'#ffffff'} />
-                )}
+                <FaUserCircle size={50} color={'#ffffff'} />
+              )}
               <span>
                 {participant.headerInformation}
               </span>

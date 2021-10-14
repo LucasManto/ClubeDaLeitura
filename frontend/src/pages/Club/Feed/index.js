@@ -198,9 +198,10 @@ function Feed({ clubId }) {
   }, [clubId])
 
   useEffect(() => {
-    fetch("http://worldclockapi.com/api/json/utc/now")
+    fetch("https://worldtimeapi.org/api/ip")
       .then(response => response.json())
-      .then(result => setCurrentDate(new Date(result.currentDateTime)))
+      .then(result => setCurrentDate(new Date(result.utc_datetime)))
+      .catch(console.log);
   }, [])
 
   const isBeforeIntroductionLimit = useMemo(() => {
@@ -331,8 +332,8 @@ function Feed({ clubId }) {
                           {interactionData.participant.imgUrl ? (
                             <img src={interactionData.participant.imgUrl} alt={`${interactionData.participant.name} ${interactionData.participant.surname}`} />
                           ) : (
-                              <FaUserCircle size={50} color="var(--white)" />
-                            )
+                            <FaUserCircle size={50} color="var(--white)" />
+                          )
                           }
                           <span>{`${interactionData.participant.name} ${interactionData.participant.surname}`}</span>
                         </ParticipantInfo>
@@ -341,8 +342,8 @@ function Feed({ clubId }) {
                           {interactionData.chosenParticipant.imgUrl ? (
                             <img src={interactionData.chosenParticipant.imgUrl} alt={`${interactionData.chosenParticipant.name} ${interactionData.chosenParticipant.surname}`} />
                           ) : (
-                              <FaUserCircle size={50} color="var(--white)" />
-                            )
+                            <FaUserCircle size={50} color="var(--white)" />
+                          )
                           }
                           <span>{`${interactionData.chosenParticipant.name} ${interactionData.chosenParticipant.surname}`}</span>
                         </ParticipantInfo>
@@ -373,8 +374,8 @@ function Feed({ clubId }) {
                   {interactionData.chosenParticipant.imgUrl ? (
                     <img src={interactionData.chosenParticipant.imgUrl} alt={`${interactionData.chosenParticipant.name} ${interactionData.chosenParticipant.surname}`} />
                   ) : (
-                      <FaUserCircle size={50} color="var(--white)" />
-                    )
+                    <FaUserCircle size={50} color="var(--white)" />
+                  )
                   }
                   <span>Resumo de {interactionData.chosenParticipant.name}</span>
                 </MessageHeader>
@@ -388,8 +389,8 @@ function Feed({ clubId }) {
                   {interactionData.participant.imgUrl ? (
                     <img src={interactionData.participant.imgUrl} alt={`${interactionData.participant.name} ${interactionData.participant.surname}`} />
                   ) : (
-                      <FaUserCircle size={50} color="var(--white)" />
-                    )
+                    <FaUserCircle size={50} color="var(--white)" />
+                  )
                   }
                   <span>Vídeo-resposta de {interactionData.participant.name}</span>
                 </MessageHeader>
@@ -399,8 +400,8 @@ function Feed({ clubId }) {
                       <video src={interactionData.response} controls></video>
                     </VideoContainer>
                   ) : (
-                      <span>Aguardando envio...</span>
-                    )
+                    <span>Aguardando envio...</span>
+                  )
                 }
               </Message>
 
